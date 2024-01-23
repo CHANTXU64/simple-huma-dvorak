@@ -20,9 +20,6 @@ switches: # 0 默认关，1 默认开
   - name: extended_char  #自定义字集
     reset: 1
     states: [ 全字集 , 常用字 ]
-  - name: pinyin  #拼音滤镜
-    reset: 0
-    states: [ 拼, pīn ]
   - name: emoji_cn  #emoji滤镜
     reset: 0
     states: [ 🈚, 🈶 ]
@@ -46,7 +43,6 @@ engine:
     - key_binder
     - speller
     - punctuator
-    - lua_processor@exe_processor #exe启动器
     - selector
     - navigator
     - express_editor #计算
@@ -77,7 +73,6 @@ engine:
     # - charset_filter@gbk
     # - charset_filter@gb2312
     # - reverse_lookup_filter@reverse_lookup #反查词典滤镜
-    - simplifier@pinyin #拼音滤镜
     - simplifier@chaifen #拆分滤镜
     - simplifier@emoji_cn #表情滤镜
     - uniquifier #过滤重复
@@ -133,7 +128,6 @@ key_binder:
     - { when: has_menu, accept: equal, send: Page_Down } # = 向前翻页
     # - { when: composing, accept: bracketleft, send: Page_Up } # [ 后翻
     # - { when: composing, accept: bracketright, send: Page_Down } # ] 前翻
-    - { accept: "Control+p", toggle: pinyin, when: composing }  # PC 拼音开关
     - { accept: "Control+i", toggle: emoji_cn, when: composing }  # PC emoji开关
     - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
     - { accept: "Control+Shift+H", toggle: extended_char, when: composing } # PC 自定字集开关2
@@ -176,22 +170,6 @@ historyDM3:
   input: "]"
   size: 1
   initial_quality: 999
-
-# ↓拼音滤镜
-pinyin:
-  opencc_config: pinyin.json
-  option_name: pinyin
-  show_in_comment: true #作为注解在后面显示
-  comment_format:
-    - 'xform/&nbsp;/ /'
-    # - "xform/^/ /"
-  tips: char
-  tags:
-    - abc
-    - tiger
-    - tigress
-    # - reverse_lookup
-
 
 # ↓emoji表情滤镜
 emoji_cn:

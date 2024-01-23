@@ -16,9 +16,6 @@ switches: # 0 默认关，1 默认开
   # - name: extended_char  #自定义字集
   #   reset: 1
   #   states: [ 全字集 , 常用字 ]
-  - name: pinyin  #拼音滤镜
-    reset: 0
-    states: [ 拼, pīn ]
   - name: emoji_cn  #emoji滤镜
     reset: 0
     states: [ 🈚, 🈶 ]
@@ -47,7 +44,6 @@ engine:
     - key_binder # 在特定条件下将按键绑定到其他按键，如重定义逗号、句号为候选翻页键
     - speller # 把字母追加到编码串
     - punctuator # 处理符号按键
-    - lua_processor@exe_processor #exe启动器
     - selector # 选字和换页功能
     - navigator # 移动插入点
     - express_editor # 空格确认当前输入，其他字符直接上屏
@@ -82,7 +78,6 @@ engine:
     # - charset_filter@gbk
     # - charset_filter@gb2312
     # - charset_filter@big5
-    - simplifier@pinyin  #拼音滤镜
     - simplifier@emoji_cn  #表情滤镜
     - uniquifier  # 过滤重复的候选字，可能来自简繁转换
 
@@ -150,7 +145,6 @@ key_binder:
     - { when: has_menu, accept: equal, send: Page_Down } # = 向前翻页
     # - { when: composing, accept: bracketleft, send: Page_Up } # [ 后翻
     # - { when: composing, accept: bracketright, send: Page_Down } # ] 前翻
-    - { accept: "Control+p", toggle: pinyin, when: composing }  # PC 拼音开关
     - { accept: "Control+i", toggle: emoji_cn, when: composing }  # PC emoji开关
     # - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
     # - { accept: "Control+j", toggle: chaifen, when: composing } # PC 拆分滤镜开关
@@ -204,21 +198,6 @@ reverse_lookup:
   comment_format:
     # - xform/([nl])v/$1ü/
     - "xform/^/ /"
-
-
-# ↓拼音滤镜
-pinyin:
-  opencc_config: pinyin.json
-  option_name: pinyin
-  show_in_comment: true #作为注解在后面显示
-  comment_format:
-    - 'xform/&nbsp;/ /'
-    - "xform/^/ /"
-  tips: char
-  tags:
-    - abc
-    - reverse_lookup
-
 
 
 # ↓emoji表情滤镜
