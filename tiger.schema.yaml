@@ -38,18 +38,9 @@ switches: # 0 默认关，1 默认开
   - options: [_keyboard_default, _keyboard_defaultbk, _keyboard_defaultwk]
     reset: 0
     states: [ 有刻, 半刻, 无刻 ]
-  - name: charset_comment_filter  #字符集提示
-    reset: 0  
-    states: [ U区关, U区开 ]
-  - name: udpf_switch
-    reset: 0
-    states: [ U编关, U编开]
   - name: ascii_punct
     reset: 0
     states: [ 。，, ．， ]
-  # - name: dz_ci  #过滤词组
-  #   reset: 0
-  #   states: [ 词组, 单字 ]
   - options: [_keyboard_default, _keyboard_defaultzj]
     reset: 0
     states: [ 助记关, 助记开 ]
@@ -94,7 +85,6 @@ engine:
 
   filters:
     - lua_filter@core2022  #自定义字集过滤lua；放在最上面完美解决简繁滤镜出错的问题
-    # - lua_filter@dz_ci  #过滤词组lua，单字模式
     # - charset_filter@utf8
     # - charset_filter@gbk
     # - charset_filter@gb2312
@@ -104,8 +94,8 @@ engine:
     - simplifier@pinyin #拼音滤镜
     - simplifier@chaifen #拆分滤镜
     - simplifier@emoji_cn #表情滤镜
-    - lua_filter@charset_comment_filter #Unicode分区提示滤镜
-    - lua_filter@lua_unicode_display_filter #Unicode编码显示
+    # - lua_filter@charset_comment_filter #Unicode分区提示滤镜
+    # - lua_filter@lua_unicode_display_filter #Unicode编码显示
     - uniquifier #过滤重复
 
 speller:
@@ -163,8 +153,6 @@ key_binder:
     # - { accept: "Control+Shift+O", toggle: fanjian, when: composing }  # 繁简开关
     - { accept: "Control+p", toggle: pinyin, when: composing }  # PC 拼音开关
     - { accept: "Control+i", toggle: emoji_cn, when: composing }  # PC emoji开关
-    - { accept: "Control+u", toggle: charset_comment_filter, when: composing }  # PC Unicode分区开关
-    - { accept: "Control+y", toggle: udpf_switch, when: composing }  #PC Unicode编码开关
     - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
     - { accept: "Control+Shift+H", toggle: extended_char, when: composing } # PC 自定字集开关2
     - { accept: "Control+j", toggle: chaifen, when: composing } # PC 拆分滤镜开关
