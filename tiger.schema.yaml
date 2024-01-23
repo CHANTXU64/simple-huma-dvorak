@@ -8,7 +8,7 @@ schema:
   description: |
     虎码官方单字
     敲 ` 鍵進入拼音反查
-  name: "虎码官方单字"
+  name: "虎码单字"
   schema_id: tiger
   version: 0.9
 
@@ -27,7 +27,7 @@ switches: # 0 默认关，1 默认开
     reset: 0
     states: [ 🈚, 🈶 ]
   - name: chaifen
-    reset: 0 
+    reset: 1 
     states: [ 拆隐, 拆显 ]
   # - options: [ gb2312, gbk, utf8 ]
   #   states: [ gb2312, GBK, UTF-8 ]
@@ -168,16 +168,6 @@ key_binder:
     - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
     - { accept: "Control+Shift+H", toggle: extended_char, when: composing } # PC 自定字集开关2
     - { accept: "Control+j", toggle: chaifen, when: composing } # PC 拆分滤镜开关
-    # - { when: composing, accept: '&', toggle: emoji_cn } # 手机 emoji开关
-    # - { when: composing, accept: '*', toggle: simplification } # 手机 繁简开关
-    # - { when: composing, accept: '\', toggle: pinyin } # 手机 拼音开关
-    # - { when: composing, accept: '^', toggle: charset_comment_filter } # 手机 Unicode分区开关1
-    # - { when: composing, accept: '#', toggle: charset_comment_filter } # 手机 Unicode分区开关2
-    # - { accept: "%", toggle: udpf_switch, when: composing }  #手机 Unicode编码开关
-    # - { accept: "+", toggle: udpf_switch, when: composing }  #手机 Unicode编码开关
-    # - { when: composing, accept: '_', toggle: extended_char} # 手机 自定字集开关1
-    # - { when: composing, accept: ':', toggle: extended_char} # 手机 自定字集开关2
-    # - { when: composing, accept: '"', toggle: chaifen } # 手机 拆分滤镜开关
     - { when: has_menu, accept: Right, send: Down } # 右方向键 向后移动焦点
     - { when: has_menu, accept: Left, send: Up } # 左方向键 向前移动焦点
     - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
