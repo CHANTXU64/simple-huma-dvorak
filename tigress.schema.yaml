@@ -4,7 +4,6 @@ schema:
   dependencies:
     - core2022  #自定义字集工具方案
     - PY_c  # 拼音方案
-    - easy_english # 英文
   description: |
     虎码官方词库
     敲 ` 鍵進入拼音反查
@@ -49,7 +48,6 @@ engine:
   segmentors:  # 分段
     - ascii_segmentor
     - matcher
-    - affix_segmentor@easy_english #英文相关
     - abc_segmentor
     - punct_segmentor
     - fallback_segmentor
@@ -57,7 +55,6 @@ engine:
     - punct_translator
     - reverse_lookup_translator #拼音反查
     - table_translator
-    - table_translator@easy_english #临时英文
     - history_translator@historyDM # 重复上屏 电脑
     - history_translator@historyDM2 # 重复上屏 电脑2
     - history_translator@historyDM3 # 重复上屏 电脑3
@@ -143,7 +140,6 @@ recognizer:
     punct: "^/([0-9]0?|[A-Za-z]+)$"
     # uppercase: "" #中文状态大写锁定直接上屏
     reverse_lookup: "^`[a-z]*'?$"
-    easy_english: "^'[A-Z|a-z]*`?$"
     expression: "^=.*$"
 
 # menu:
@@ -176,20 +172,6 @@ emoji_cn:
   opencc_config: emoji.json
   option_name: emoji_cn
   tips: all
-
-# 临时英文
-easy_english:
-  dictionary: easy_english
-  tag: easy_english
-  prefix: "'"
-  tips: 〔En〕
-  enable_completion: true
-  enable_sentence: false
-  initial_quality: -1
-  preedit_format:
-    - "xlit|_| |"
-  comment_format: #去掉编码提示前的~号
-    - "xform/~/ /"
 
 # 拆分滤镜
 chaifen:
