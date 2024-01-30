@@ -4,42 +4,100 @@ const fs = require('fs');
 const wordFileName = 'tools/common_char.txt';
 const wordContent = fs.readFileSync(wordFileName, 'utf-8').trim();
 
-// 读取 orig yaml 文件
-const csvFileName = './orig.tiger.dict.yaml';
-const csvContent = fs.readFileSync(csvFileName, 'utf-8');
+const match_table = JSON.parse(fs.readFileSync("tools/mapping_table.json"))
 
-// 将 yaml 内容按行分割
-const csvLines = csvContent.split('\n');
+/** @param {string} x
+/** @param {string} s
+ *  @returns {string} */
+function maps (s) {
+  let res = "";
+  for (let i = 0; i < s.length; ++i) {
+    if (s[i] in match_table) {
+      res += match_table[s[i]];
+    } else {
+      res += s[i];
+    }
+  }
+  return res;
+}
 
-// 记录被删除的行的首个汉字
-const deletedChineseCharacters = [];
-
-// 处理 CSV 行，排除表头并保留首列第一个汉字在 word 文件中找得到的行
-const filteredLines = csvLines.map((line, index) => {
-  if (index === 0 || index === 1 || index === 2 || index === 3 || index === 4 || index === 5 || index === 6 || index === 7 || index === 8 || index === 9 || index === 10) {
-    // 如果是表头行，直接返回
+/** 处理 CSV 行，排除表头并保留首列第一个汉字在 word 文件中找得到的行
+ *  @param { string } fileName
+ *  @param { number } startRow
+ *  @returns { string[] }
+ */
+function getFilteredLines (fileName, startRow) {
+  const fileContent = fs.readFileSync(fileName, 'utf-8');
+  // 将 yaml 内容按行分割
+  const csvLines = fileContent.split('\n');
+  // 记录被删除的行的首个汉字
+  let deletedChineseCharacters = [];
+  let filteredLines = csvLines.map((line, index) => {
+    if (index <= startRow) {
+      // 如果是表头行，直接返回
+      return line;
+    }
+    const firstChineseCharacter = line.split('\t')[0];
+    if (!wordContent.includes(firstChineseCharacter)) {
+      // 记录被删除的行的首个汉字
+      deletedChineseCharacters.push(firstChineseCharacter);
+      return null; // 返回 null 表示删除这一行
+    }
     return line;
-  }
+  }).filter(line => line !== null); // 过滤掉被删除的行（为 null 的行）
+  // 输出被删除的行的首个汉字
+  console.log('被删除的:\n', deletedChineseCharacters.join(''));
+  return filteredLines;
+}
 
-  const firstChineseCharacter = line.split('\t')[0];
-  // const firstChineseCharacter = line.trim().charAt(0);
-  if (!wordContent.includes(firstChineseCharacter)) {
-    // 记录被删除的行的首个汉字
-    deletedChineseCharacters.push(firstChineseCharacter);
-    return null; // 返回 null 表示删除这一行
-  }
-  return line;
-}).filter(line => line !== null); // 过滤掉被删除的行（为 null 的行）
+/**
+ *  @param { string[] } lines
+ *  @param { number } startRow
+ *  @param { RegExp } searchRe
+ *  @returns { string[] } */
+function replaceCode (lines, startRow, searchRe) {
+  return lines.map((line, index) => {
+    if (index <= startRow) {
+      return line;
+    }
+    let replaceStr = searchRe.exec(line);
+    if (replaceStr == null) {
+      return line;
+    } else {
+      return line.replace(searchRe, maps(replaceStr[0]));
+    }
+  });
+    // let split = line.split('\t');
+    // if (split.length <= 1) {
+    //   return line;
+    // } else {
+    //   return split[0] + '\t' + maps(split[1]) + '\t' + split[2];
+    // }
+}
 
+// 读取 orig yaml 文件
 // 将过滤后的内容重新组合为字符串
-const filteredCSVContent = filteredLines.join('\n');
-
-// 输出被删除的行的首个汉字
-console.log('被删除的:\n', deletedChineseCharacters.join(''));
-
+let filteredLines = getFilteredLines('./orig.tiger.dict.yaml', 10);
+let filteredCSVContent = replaceCode(filteredLines, 10, /\t.*\t/).join('\n');
 // 将过滤后的内容写入新的 yaml 文件
-const filteredCSVFileName = './tiger.dict.yaml';
+let filteredCSVFileName = './tiger.dict.yaml';
 fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
-
 console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
 
+// 读取 orig yaml 文件
+// 将过滤后的内容重新组合为字符串
+filteredCSVContent = getFilteredLines('./orig.stroke.dict.yaml', 22).join('\n');
+// 将过滤后的内容写入新的 yaml 文件
+filteredCSVFileName = './stroke.dict.yaml';
+fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
+console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
+
+// 读取 orig yaml 文件
+// 将过滤后的内容重新组合为字符串
+filteredLines = getFilteredLines('opencc/orig.hu_cf.txt', -1);
+filteredLines = replaceCode(filteredLines, -1, /(?<=·&nbsp;[a-z',.;]*&nbsp;)[a-z',.;]*〕/);
+filteredCSVContent = replaceCode(filteredLines, -1, /(?<=·&nbsp;)[a-z',.;]*〕/).join('\n');
+// 将过滤后的内容写入新的 yaml 文件
+filteredCSVFileName = 'opencc/hu_cf.txt';
+fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
+console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
