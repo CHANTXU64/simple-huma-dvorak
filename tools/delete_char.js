@@ -21,15 +21,21 @@ function maps (s) {
   return res;
 }
 
+/**
+ *  @param { string } fileName
+ *  @returns { string[] } */
+function getAllLines (fileName) {
+  const fileContent = fs.readFileSync(fileName, 'utf-8');
+  // 将 yaml 内容按行分割
+  return fileContent.split('\n');
+}
+
 /** 处理 CSV 行，排除表头并保留首列第一个汉字在 word 文件中找得到的行
  *  @param { string } fileName
  *  @param { number } startRow
- *  @returns { string[] }
- */
+ *  @returns { string[] } */
 function getFilteredLines (fileName, startRow) {
-  const fileContent = fs.readFileSync(fileName, 'utf-8');
-  // 将 yaml 内容按行分割
-  const csvLines = fileContent.split('\n');
+  const csvLines = getAllLines(fileName);
   // 记录被删除的行的首个汉字
   let deletedChineseCharacters = [];
   let filteredLines = csvLines.map((line, index) => {
@@ -86,6 +92,33 @@ console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
 
 // 读取 orig yaml 文件
 // 将过滤后的内容重新组合为字符串
+filteredLines = getFilteredLines('./orig.tigress.dict.yaml', 20);
+filteredCSVContent = replaceCode(filteredLines, 20, /\s[a-z',.;]*\s/g).join('\n');
+// 将过滤后的内容写入新的 yaml 文件
+filteredCSVFileName = './tigress.dict.yaml';
+fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
+console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
+
+// 读取 orig yaml 文件
+// 将过滤后的内容重新组合为字符串
+let allLines = getAllLines('./orig.tigress_ci.dict.yaml');
+filteredCSVContent = replaceCode(allLines, 19, /\s[a-z',.;]+/g).join('\n');
+// 将过滤后的内容写入新的 yaml 文件
+filteredCSVFileName = './tigress_ci.dict.yaml';
+fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
+console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
+
+// 读取 orig yaml 文件
+// 将过滤后的内容重新组合为字符串
+allLines = getAllLines('./orig.tigress_simp_ci.dict.yaml');
+filteredCSVContent = replaceCode(allLines, 19, /\s[a-z',.;]+/g).join('\n');
+// 将过滤后的内容写入新的 yaml 文件
+filteredCSVFileName = './tigress_simp_ci.dict.yaml';
+fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
+console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
+
+// 读取 orig yaml 文件
+// 将过滤后的内容重新组合为字符串
 filteredCSVContent = getFilteredLines('./orig.stroke.dict.yaml', 22).join('\n');
 // 将过滤后的内容写入新的 yaml 文件
 filteredCSVFileName = './stroke.dict.yaml';
@@ -96,6 +129,7 @@ console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
 // 将过滤后的内容重新组合为字符串
 filteredLines = getFilteredLines('opencc/orig.hu_cf.txt', -1);
 filteredLines = replaceCode(filteredLines, -1, /(?<=·&nbsp;[a-z',.;]*&nbsp;)[a-z',.;]*〕/);
+filteredLines  = replaceCode(filteredLines, -1, /(?<=·&nbsp;)[a-z',.;]*\&/);
 filteredCSVContent = replaceCode(filteredLines, -1, /(?<=·&nbsp;)[a-z',.;]*〕/).join('\n');
 // 将过滤后的内容写入新的 yaml 文件
 filteredCSVFileName = 'opencc/hu_cf.txt';

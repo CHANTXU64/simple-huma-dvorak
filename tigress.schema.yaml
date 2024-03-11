@@ -5,7 +5,7 @@ schema:
     - core2022  #自定义字集工具方案
     - PY_c  # 拼音方案
   description: |
-    虎码官方词库
+    虎码词库
     敲 ` 鍵進入拼音反查
   name: "虎码词库"
   schema_id: tigress
@@ -55,10 +55,10 @@ engine:
     - punct_translator
     - reverse_lookup_translator #拼音反查
     - table_translator
-    - history_translator@historyDM # 重复上屏 电脑
-    - history_translator@historyDM2 # 重复上屏 电脑2
-    - history_translator@historyDM3 # 重复上屏 电脑3
-    - history_translator@historySJ # 重复上屏 手机
+    # - history_translator@historyDM # 重复上屏 电脑
+    # - history_translator@historyDM2 # 重复上屏 电脑2
+    # - history_translator@historyDM3 # 重复上屏 电脑3
+    # - history_translator@historySJ # 重复上屏 手机
     - lua_translator@number_translator # 数字转大写
     - lua_translator@calculator_translator # 简易计算器
     - lua_translator@shijian2_translator # 高级时间
@@ -76,12 +76,13 @@ engine:
     - uniquifier #过滤重复
 
 speller:
-  auto_clear: max_length # 3种选择， manual|auto|max_length 空码按下一键确认清屏|空码自动清|达到最长码时后码顶上清屏
+  auto_clear: none # 3种选择， manual|auto|max_length 空码按下一键确认清屏|空码自动清|达到最长码时后码顶上清屏
   auto_select: true
   max_code_length: 4
-  alphabet: "[;'zyxwvutsrqponmlkjihgfedcba]"
+  alphabet: "[;,.'yxutrqponmlkjihgfedcba]"
   # initials: "abcdefghijklmnopqrstuvwxyz;'"
-  auto_select_pattern: ^;\w+ #自动上屏规则  对 [;] 引导的编码实行候选唯一自动上屏
+  # auto_select_pattern: ^;\w+ #自动上屏规则  对 [;] 引导的编码实行候选唯一自动上屏
+  auto_select_pattern: ^[',.pyfgcrlaoeuidhtn;qjkxbm]{4}$ #自动上屏规则  对 [;] 引导的编码实行候选唯一自动上屏
   # 若要添加四码上屏功能，在  ^;\w+ 后面 加上  |^\w{4}$  即可
 
 translator:
@@ -97,6 +98,18 @@ translator:
     - "xform/~/ /" #去掉编码提示前的~号
     # - "xform/^/ /" #提示前面 +间距
 
+encode:
+  tag: encode
+  prefix: "'"    
+  tips: 【手動造詞】
+  closing_tips: 【造詞關閉】
+
+encode_sentence:
+  __include: translator
+  tag: encode
+  enable_sentence: true
+  enable_user_dict: true
+  enable_completion: true
 
 reverse_lookup:
   dictionary: PY_c
@@ -118,54 +131,56 @@ key_binder:
     #- { when: composing, accept: Return, send: Escape }
     #- { accept: space, send: space, when: has_menu } #有候选时空格上屏首选
     #- { accept: space, send: Escape, when: composing } #无候选时(空码)空格清屏
-    - { accept: semicolon, send: 2, when: has_menu } # 分号次选
-    - { when: has_menu, accept: apostrophe, send: 3 } # 引号三选
-    - { when: composing, accept: Tab, send: Escape } # tab清屏
-    - { when: has_menu, accept: minus, send: Page_Up } # - 向后翻页
-    - { when: has_menu, accept: equal, send: Page_Down } # = 向前翻页
+    - { accept: s, send: 2, when: has_menu } # 分号次选
+    - { when: has_menu, accept: minus, send: 3 } # 引号三选
+    # - { when: composing, accept: Tab, send: Escape } # tab清屏
+    # - { when: has_menu, accept: minus, send: Page_Up } # - 向后翻页
+    # - { when: has_menu, accept: equal, send: Page_Down } # = 向前翻页
     # - { when: composing, accept: bracketleft, send: Page_Up } # [ 后翻
     # - { when: composing, accept: bracketright, send: Page_Down } # ] 前翻
     - { accept: "Control+i", toggle: emoji_cn, when: composing }  # PC emoji开关
-    - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
-    - { accept: "Control+Shift+H", toggle: extended_char, when: composing } # PC 自定字集开关2
-    - { accept: "Control+j", toggle: chaifen, when: composing } # PC 拆分滤镜开关
+    # - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
+    # - { accept: "Control+Shift+H", toggle: extended_char, when: composing } # PC 自定字集开关2
+    # - { accept: "Control+j", toggle: chaifen, when: composing } # PC 拆分滤镜开关
     - { when: has_menu, accept: Right, send: Down } # 右方向键 向后移动焦点
     - { when: has_menu, accept: Left, send: Up } # 左方向键 向前移动焦点
+    - { when: always, accept: "Control+space" , toggle: ascii_mode } # 中英切换
     - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
     - { when: always, accept: "Shift+space" , toggle: full_shape } # 全半角切换
 
 recognizer:
-  import_preset: default
+  # import_preset: default
   patterns:
     punct: "^/([0-9]0?|[A-Za-z]+)$"
     # uppercase: "" #中文状态大写锁定直接上屏
     reverse_lookup: "^`[a-z]*'?$"
     expression: "^=.*$"
+    encode: "^'([a-z]+'?)*$"
 
 # menu:
   # page_size: 9 #候选数量
   # alternative_select_labels: [ ㊀, ㊁, ㊂, ㊃, ㊄, ㊅, ㊆, ㊇, ㊈ ]  #自定义候选序号显示符
 
-historySJ:
-  input: z
-  size: 1
-  initial_quality: 0
+# historySJ:
+#   input: z
+#   size: 1
+#   initial_quality: 0
 
-historyDM:
-  input: "["
-  size: 1
-  initial_quality: 999
+# historyDM:
+#   input: "["
+#   size: 1
+#   initial_quality: 999
 
 
-historyDM2:
-  input: "'"
-  size: 1
-  initial_quality: -999
+# historyDM2:
+#   input: "'"
+#   size: 1
+#   initial_quality: -999
 
-historyDM3:
-  input: "]"
-  size: 1
-  initial_quality: 999
+# historyDM3:
+#   input: "]"
+#   size: 1
+#   initial_quality: 999
 
 # ↓emoji表情滤镜
 emoji_cn:
@@ -187,6 +202,71 @@ chaifen:
     - reverse_lookup
   tips: all  #只给单字加滤镜，改为 char 。 词也显示，改为 all
 
-
 punctuator:
-  import_preset: symbols
+  full_shape:
+    ' ' : { commit: '　' }
+    'w' : { commit: ， }
+    'v' : { commit: 。 }
+    '<' : [ 《, 〈, «, ‹ ]
+    '>' : [ 》, 〉, », › ]
+    '/' : [ ／, ÷ ]
+    '?' : { commit: ？ }
+    ';' : { commit: ； }
+    ':' : { commit: ： }
+    '''' : { pair: [ '‘', '’' ] }
+    '"' : { pair: [ '“', '”' ] }
+    '\' : 、 #[ 、, ＼ ]
+    '|' : [ ｜, ·, '§', '¦' ]
+    '`' : ｀
+    '~' : ～
+    '!' : { commit: ！ }
+    '@' : ＠ #[ ＠, ☯ ]
+    '#' : ＃ #[ ＃, ⌘ ]
+    '%' : [ ％, '°', '℃' ]
+    '$' : [ ￥, '$', '€', '£', '¥', '¢', '¤', ₩ ]
+    '^' : { commit: …… }
+    '&' : ＆
+    '*' : ＊ #[ ＊, ·, ・, ×, ※, ❂ ]
+    '(' : （
+    ')' : ）
+    '-' : －
+    '_' : ——
+    '+' : ＋
+    '=' : [ ＝, 々, 〃 ]
+    '[' : [ 【, 〔, 「, ［ ] #, 〚, 〘
+    ']' : [ 】, 〕, 」, ］] #, 〛, 〙
+    '{' : [ "{", 〖, 『 , ｛ ]
+    '}' : [ "}", 〗, 』 , ｝ ]
+  half_shape:
+    'w' : { commit: ， }
+    'v' : { commit: 。 }
+    'W' : [ 《, 〈, «, ‹, ˂, ˱ ]
+    'V' : [ 》, 〉, », ›, ˃, ˲ ]
+    '/' : '/'
+    '?' : { commit: ？ }
+    's' : { commit: ； }
+    'S' : { commit: ： }
+    'z' : { pair: [ '‘', '’' ] }
+    'Z' : { pair: [ '“', '”' ] }
+    '\' : { commit: 、 } #[ 、, '\', ＼ ]
+    '|' : [ '|', ·, '·' , ｜, '§', '¦', '‖', ︴ ]
+    '`' : [ '`', ·, ‵, ‶, ‷, ′, ″, ‴, ⁗ ]
+    '~' : [ '~', ～, ˜, ˷, ⸯ, ≈, ≋, ≃, ≅, ≇, ∽, ⋍, ≌, ﹏, ﹋, ﹌, ︴ ]
+    '!' : { commit: ！ }
+    '@' : '@' #[ '@', ©, ®, ℗ ]
+    '#' : '#' #[ '#', № ]
+    '%' : [ '%', ％, '°', '℃', ‰, ‱, ℉, ℅, ℆, ℀, ℁, ⅍ ]
+    '$' : [ ￥, '$', '€', '£', '¥', '¢', '¤', ₩ ]
+    '^' : { commit: …… }
+    '&' : '&'
+    '*' : '*' #[ '*', ＊, ·, ‧, ・, ･, ×, ※, ❂, ⁂, ☮, ☯, ☣ ]
+    '(' : （
+    ')' : ）
+    '-' : '-'
+    '_' : ——
+    '+' : '+'
+    '=' : '='
+    '[' : 【 #[ 【, 〔, 「, ［ ] #, 〚, 〘
+    ']' : 】 #[ 】, 〕, 」, ］] #, 〛, 〙
+    '{' : [ "{", 〖, 『 , ｛ ]
+    '}' : [ "}", 〗, 』 , ｝ ]
