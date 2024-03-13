@@ -73,18 +73,66 @@ function replaceCode (lines, startRow, searchRe) {
       return line.replace(searchRe, maps(replaceStr[0]));
     }
   });
-    // let split = line.split('\t');
-    // if (split.length <= 1) {
-    //   return line;
-    // } else {
-    //   return split[0] + '\t' + maps(split[1]) + '\t' + split[2];
-    // }
+}
+
+/**
+ *  @param { string[] } lines
+ *  @param { number } startRow
+ *  @param { RegExp } searchRe
+ *  @returns { string[] } */
+function replaceCodeAndExpand3Code (lines, startRow, searchRe) {
+  // let charMap: Map<string, string[][]> = new Map();
+  let charMap = new Map();
+  lines.map((line, index) => {
+    if (index > startRow) {
+      let replaceStr = searchRe.exec(line);
+      if (replaceStr != null) {
+        let newLine = line.replace(searchRe, maps(replaceStr[0]));
+        let splittedArray = newLine.split("\t");
+        if (splittedArray.length == 3) {
+          let char = splittedArray[0];
+          let code = splittedArray[1];
+          let num = splittedArray[2];
+          let value = charMap.get(char);
+          if (value == undefined) {
+            charMap.set(char, [[code, num]]);
+          } else {
+            value.push([code, num]);
+          }
+        }
+      }
+    }
+  });
+  // let res: string[] = [];
+  let res = [];
+  for (let i = 0; i <= startRow; ++i) {
+    res.push(lines[i]);
+  }
+  charMap.forEach((value, char) => {
+    let codeMaxLength = 0;
+    let code_3 = "";
+    let num_3 = "";
+    value.forEach(v => {
+      res.push(char + "\t" + v[0] + "\t" + v[1]);
+      codeMaxLength = Math.max(codeMaxLength, v[0].length);
+      if (v[0].length == 3) {
+        code_3 = v[0];
+        num_3 = v[1];
+      }
+    });
+    if (codeMaxLength == 3) {
+      let code_4 = code_3 + code_3[2];
+      let num_4 = num_3;
+      res.push(char + "\t" + code_4 + "\t" + num_4);
+    }
+  });
+  return res;
 }
 
 // 读取 orig yaml 文件
 // 将过滤后的内容重新组合为字符串
 let filteredLines = getFilteredLines('./orig.tiger.dict.yaml', 10);
-let filteredCSVContent = replaceCode(filteredLines, 10, /\t.*\t/).join('\n');
+let filteredCSVContent = replaceCodeAndExpand3Code(filteredLines, 10, /\t.*\t/).join('\n');
 // 将过滤后的内容写入新的 yaml 文件
 let filteredCSVFileName = './tiger.dict.yaml';
 fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
