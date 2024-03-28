@@ -141,7 +141,7 @@ console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
 // 读取 orig yaml 文件
 // 将过滤后的内容重新组合为字符串
 filteredLines = getFilteredLines('./orig.tigress.dict.yaml', 20);
-filteredCSVContent = replaceCode(filteredLines, 20, /\s[a-z',.;]*\s/g).join('\n');
+filteredCSVContent = replaceCode(filteredLines, 20, /\s[a-z',.;\t]*$/g).join('\n');
 // 将过滤后的内容写入新的 yaml 文件
 filteredCSVFileName = './tigress.dict.yaml';
 fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
