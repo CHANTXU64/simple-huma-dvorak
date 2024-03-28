@@ -6,7 +6,7 @@ schema:
     - PY_c  # 拼音方案
   description: |
     虎码单字
-    敲 ` 鍵進入拼音反查
+    敲 z 鍵進入拼音反查
   name: "虎码单字"
   schema_id: tiger
   version: 0.9
@@ -19,9 +19,6 @@ switches: # 0 默认关，1 默认开
   - name: extended_char  #自定义字集
     reset: 1
     states: [ 全字集 , 常用字 ]
-  - name: emoji_cn  #emoji滤镜
-    reset: 0
-    states: [ 🈚, 🈶 ]
   - name: chaifen
     reset: 1 
     states: [ 拆隐, 拆显 ]
@@ -63,9 +60,7 @@ engine:
 
   filters:
     - lua_filter@core2022  #自定义字集过滤lua；放在最上面完美解决简繁滤镜出错的问题
-    # - reverse_lookup_filter@reverse_lookup #反查词典滤镜
     - simplifier@chaifen #拆分滤镜
-    - simplifier@emoji_cn #表情滤镜
     - uniquifier #过滤重复
 
 speller:
@@ -89,23 +84,15 @@ translator:
   enable_completion: false	# 编码提示 true 开启  false 关闭
   comment_format:  #提示码自定义
     - "xform/~/ /" #去掉编码提示前的~号
-    # - "xform/^/ /" #提示前面 +间距
-
+  #   - "xform/^/ /" #提示前面 +间距
 
 # 拼音反查
 reverse_lookup:
   dictionary: PY_c
-  prefix: "`"
-  tips: "〔拼音〕"
-  preedit_format:
-    - "xform/([nl])v/$1ü/"
-    - "xform/([nl])ue/$1üe/"
-    - "xform/([jqxy])v/$1u/"
-  comment_format:
-    - "xform/^/ /"
-  # suffix: "'"
-
-
+  prefix: "z"
+  tips: "〔双拼〕"
+  # comment_format:
+    # - "xform/^/ /"
 
 key_binder:
   #  import_preset: default
@@ -120,7 +107,6 @@ key_binder:
     # - { when: has_menu, accept: equal, send: Page_Down } # = 向前翻页
     # - { when: composing, accept: bracketleft, send: Page_Up } # [ 后翻
     # - { when: composing, accept: bracketright, send: Page_Down } # ] 前翻
-    - { accept: "Control+i", toggle: emoji_cn, when: composing }  # PC emoji开关
     # - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
     # - { accept: "Control+j", toggle: chaifen, when: composing } # PC 拆分滤镜开关
     - { when: has_menu, accept: Right, send: Down } # 右方向键 向后移动焦点
@@ -134,39 +120,12 @@ recognizer:
   patterns:
     punct: "^/([0-9]0?|[A-Za-z]+)$"
     # uppercase: "" #中文状态大写锁定直接上屏
-    reverse_lookup: "^`[a-z]*'?$"
+    reverse_lookup: "^z[pyfgcrlaoeuidhtns;qjkxbmwvz]*$"
     expression: "^=.*$"
 
 # menu:
   # page_size: 9 #候选数量
   # alternative_select_labels: [ ㊀, ㊁, ㊂, ㊃, ㊄, ㊅, ㊆, ㊇, ㊈ ]  #自定义候选序号显示符
-
-# historySJ:
-#   input: 'z'
-#   size: 1
-#   initial_quality: 0
-
-# historyDM:
-#   input: "["
-#   size: 1
-#   initial_quality: 999
-
-
-# historyDM2:
-#   input: "'"
-#   size: 1
-#   initial_quality: -999
-
-# historyDM3:
-#   input: "]"
-#   size: 1
-#   initial_quality: 999
-
-# ↓emoji表情滤镜
-emoji_cn:
-  opencc_config: emoji.json
-  option_name: emoji_cn
-  tips: all
 
 # 拆分滤镜
 chaifen:
@@ -220,14 +179,16 @@ punctuator:
   half_shape:
     'w' : { commit: ， }
     'v' : { commit: 。 }
-    'W' : [ 《, 〈, «, ‹, ˂, ˱ ]
-    'V' : [ 》, 〉, », ›, ˃, ˲ ]
+    # 'W' : [ 《, 〈, «, ‹, ˂, ˱ ]
+    # 'V' : [ 》, 〉, », ›, ˃, ˲ ]
     '/' : '/'
+    '"' : { pair: [ '“', '”' ] }
+    ':' : { commit: ： }
     '?' : { commit: ？ }
-    's' : { commit: ； }
-    'S' : { commit: ： }
-    'z' : { pair: [ '‘', '’' ] }
-    'Z' : { pair: [ '“', '”' ] }
+    # 's' : { commit: ； }
+    # 'S' : { commit: ： }
+    # 'z' : { pair: [ '‘', '’' ] }
+    # 'Z' : { pair: [ '“', '”' ] }
     '\' : { commit: 、 } #[ 、, '\', ＼ ]
     '|' : [ '|', ·, '·' , ｜, '§', '¦', '‖', ︴ ]
     '`' : [ '`', ·, ‵, ‶, ‷, ′, ″, ‴, ⁗ ]
@@ -246,7 +207,7 @@ punctuator:
     '_' : ——
     '+' : '+'
     '=' : '='
-    '[' : 【 #[ 【, 〔, 「, ［ ] #, 〚, 〘
-    ']' : 】 #[ 】, 〕, 」, ］] #, 〛, 〙
+    # '[' : 【 #[ 【, 〔, 「, ［ ] #, 〚, 〘
+    # ']' : 】 #[ 】, 〕, 」, ］] #, 〛, 〙
     '{' : [ "{", 〖, 『 , ｛ ]
     '}' : [ "}", 〗, 』 , ｝ ]

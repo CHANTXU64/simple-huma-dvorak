@@ -12,22 +12,6 @@ switches: # 0 默认关，1 默认开
   - name: ascii_mode
     reset: 0
     states: [ 中文, 西文 ]
-  # - name: extended_char  #自定义字集
-  #   reset: 1
-  #   states: [ 全字集 , 常用字 ]
-  - name: emoji_cn  #emoji滤镜
-    reset: 0
-    states: [ 🈚, 🈶 ]
-  # - name: chaifen
-  #   reset: 0 
-  #   states: [ 拆隐, 拆显 ]
-  # - options: [utf8, gbk, gb2312]
-  #   reset: 0
-  #   states:
-  #     - UTF-8
-  #     - GBK
-  #     - GB2312
-  #     - BIG5
   - name: ascii_punct
     reset: 0
     states: [ 。，, ．， ]
@@ -69,8 +53,6 @@ engine:
 
 
   filters:
-    # - lua_filter@core2022  #自定义字集过滤lua；放在最上面完美解决简繁滤镜出错的问题
-    - simplifier@emoji_cn  #表情滤镜
     - uniquifier  # 过滤重复的候选字，可能来自简繁转换
 
 speller:
@@ -137,7 +119,6 @@ key_binder:
     - { when: has_menu, accept: equal, send: Page_Down } # = 向前翻页
     # - { when: composing, accept: bracketleft, send: Page_Up } # [ 后翻
     # - { when: composing, accept: bracketright, send: Page_Down } # ] 前翻
-    - { accept: "Control+i", toggle: emoji_cn, when: composing }  # PC emoji开关
     # - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
     # - { accept: "Control+j", toggle: chaifen, when: composing } # PC 拆分滤镜开关
     # - { when: has_menu, accept: Right, send: Down } # 右方向键 向后移动焦点
@@ -191,28 +172,11 @@ reverse_lookup:
     # - xform/([nl])v/$1ü/
     - "xform/^/ /"
 
-
-# ↓emoji表情滤镜
-emoji_cn:
-  opencc_config: emoji.json
-  option_name: emoji_cn
-  tips: all
-
 menu:
   page_size: 5 #候选数量
   # alternative_select_labels: [ ㊀, ㊁, ㊂, ㊃, ㊄, ㊅, ㊆, ㊇, ㊈ ]  #自定义候选序号显示符
   # 以下是备选样式（自行删除#号生效，只能生效一种）
   # menu/alternative_select_labels: [ 1,2,3,4,5,6,7,8,9,0 ]
-  #menu/alternative_select_labels: [ ①,②,③,④,⑤,⑥,⑦,⑧,⑨,⑩ ]
-  #menu/alternative_select_labels: [ ❶,❷,❸,❹,❺,❻,❼,❽,❾,❿ ]
-  #menu/alternative_select_labels: [ ⓵,⓶,⓷,⓸,⓹,⓺,⓻,⓼,⓽,⓾ ]
-  #menu/alternative_select_labels: [ ㊀,㊁,㊂,㊃,㊄,㊅,㊆,㊇,㊈,㊉ ]
-  #menu/alternative_select_labels: [ ㈠,㈡,㈢,㈣,㈤,㈥,㈦,㈧,㈨,㈩ ]
-  #menu/alternative_select_labels: [ 🀇,🀈,🀉,🀊,🀋,🀌,🀍,🀎,🀏,🀄 ]
-  #menu/alternative_select_labels: [ Ⅰ,Ⅱ,Ⅲ,Ⅳ,Ⅴ,Ⅵ,Ⅶ,Ⅷ,Ⅸ,Ⅹ ]
-  #menu/alternative_select_labels: [ ⅰ,ⅱ,ⅲ,ⅳ,ⅴ,ⅵ,ⅶ,ⅷ,ⅸ,ⅹ ]
-  #menu/alternative_select_labels: [ Ⓐ,Ⓑ,Ⓒ,Ⓓ,Ⓔ,Ⓕ,Ⓖ,Ⓗ,Ⓘ,Ⓙ ]
-  #menu/alternative_select_labels: [ ⓐ,ⓑ,ⓒ,ⓓ,ⓔ,ⓕ,ⓖ,ⓗ,ⓘ,ⓙ ]
 
 style:
   horizontal: false # 默认false竖排显示,改为true可横排显示

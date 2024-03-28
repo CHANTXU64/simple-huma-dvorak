@@ -6,7 +6,7 @@ schema:
     - PY_c  # 拼音方案
   description: |
     虎码词库
-    敲 ` 鍵進入拼音反查
+    敲 z 鍵進入拼音反查
   name: "虎码词库"
   schema_id: tigress
   version: 0.9
@@ -19,9 +19,6 @@ switches: # 0 默认关，1 默认开
   - name: extended_char  #自定义字集
     reset: 1
     states: [ 全集 , 常用 ]
-  - name: emoji_cn  #emoji滤镜
-    reset: 0
-    states: [ 🈚, 🈶 ]
   - name: chaifen
     reset: 0 
     states: [ 拆隐, 拆显 ]
@@ -66,27 +63,23 @@ engine:
 
   filters:
     - lua_filter@core2022  #自定义字集过滤lua；放在最上面完美解决简繁滤镜出错的问题
-    # - charset_filter@utf8
-    # - charset_filter@gbk
-    # - charset_filter@gb2312
-    # - charset_filter@big5
-    # - reverse_lookup_filter@reverse_lookup #反查词典滤镜
     - simplifier@chaifen #拆分滤镜
-    - simplifier@emoji_cn  #表情滤镜
     - uniquifier #过滤重复
 
 speller:
   auto_clear: none # 3种选择， manual|auto|max_length 空码按下一键确认清屏|空码自动清|达到最长码时后码顶上清屏
-  auto_select: true
-  max_code_length: 4
+  # auto_select: true
+  # max_code_length: 4
   alphabet: "[;,.'yxutrqponmlkjihgfedcba]"
   # initials: "abcdefghijklmnopqrstuvwxyz;'"
   # auto_select_pattern: ^;\w+ #自动上屏规则  对 [;] 引导的编码实行候选唯一自动上屏
-  auto_select_pattern: ^[',.pyfgcrlaoeuidhtn;qjkxbm]{4}$ #自动上屏规则  对 [;] 引导的编码实行候选唯一自动上屏
+  # auto_select_pattern: ^[',.pyfgcrlaoeuidhtn;qjkxbm]{4}$ #自动上屏规则  对 [;] 引导的编码实行候选唯一自动上屏
   # 若要添加四码上屏功能，在  ^;\w+ 后面 加上  |^\w{4}$  即可
 
 translator:
   dictionary: tigress
+  prism: tigress
+  initial_quality: 1    #该翻译器出字优先级别
   enable_charset_filter: false
   enable_encoder: false
   enable_sentence: false
@@ -98,29 +91,29 @@ translator:
     - "xform/~/ /" #去掉编码提示前的~号
     # - "xform/^/ /" #提示前面 +间距
 
-encode:
-  tag: encode
-  prefix: "'"    
-  tips: 【手動造詞】
-  closing_tips: 【造詞關閉】
+# encode:
+#   tag: encode
+#   prefix: "'"    
+#   tips: 【手動造詞】
+#   closing_tips: 【造詞關閉】
 
-encode_sentence:
-  __include: translator
-  tag: encode
-  enable_sentence: true
-  enable_user_dict: true
-  enable_completion: true
+# encode_sentence:
+#   __include: translator
+#   tag: encode
+#   enable_sentence: true
+#   enable_user_dict: true
+#   enable_completion: true
 
 reverse_lookup:
   dictionary: PY_c
-  prefix: "`"
+  prefix: "z"
   tips: "〔拼音〕"
-  preedit_format:
-    - "xform/([nl])v/$1ü/"
-    - "xform/([nl])ue/$1üe/"
-    - "xform/([jqxy])v/$1u/"
-  comment_format:
-    - "xform/^/ /"
+  # preedit_format:
+  #   - "xform/([nl])v/$1ü/"
+  #   - "xform/([nl])ue/$1üe/"
+  #   - "xform/([jqxy])v/$1u/"
+  # comment_format:
+  #   - "xform/^/ /"
   # suffix: "'"
 
 
@@ -138,7 +131,6 @@ key_binder:
     # - { when: has_menu, accept: equal, send: Page_Down } # = 向前翻页
     # - { when: composing, accept: bracketleft, send: Page_Up } # [ 后翻
     # - { when: composing, accept: bracketright, send: Page_Down } # ] 前翻
-    - { accept: "Control+i", toggle: emoji_cn, when: composing }  # PC emoji开关
     # - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
     # - { accept: "Control+Shift+H", toggle: extended_char, when: composing } # PC 自定字集开关2
     # - { accept: "Control+j", toggle: chaifen, when: composing } # PC 拆分滤镜开关
@@ -153,40 +145,13 @@ recognizer:
   patterns:
     punct: "^/([0-9]0?|[A-Za-z]+)$"
     # uppercase: "" #中文状态大写锁定直接上屏
-    reverse_lookup: "^`[a-z]*'?$"
+    reverse_lookup: "^z[a-z;]*$"
     expression: "^=.*$"
-    encode: "^'([a-z]+'?)*$"
+    # encode: "^'([a-z]+'?)*$"
 
 # menu:
   # page_size: 9 #候选数量
   # alternative_select_labels: [ ㊀, ㊁, ㊂, ㊃, ㊄, ㊅, ㊆, ㊇, ㊈ ]  #自定义候选序号显示符
-
-# historySJ:
-#   input: z
-#   size: 1
-#   initial_quality: 0
-
-# historyDM:
-#   input: "["
-#   size: 1
-#   initial_quality: 999
-
-
-# historyDM2:
-#   input: "'"
-#   size: 1
-#   initial_quality: -999
-
-# historyDM3:
-#   input: "]"
-#   size: 1
-#   initial_quality: 999
-
-# ↓emoji表情滤镜
-emoji_cn:
-  opencc_config: emoji.json
-  option_name: emoji_cn
-  tips: all
 
 # 拆分滤镜
 chaifen:
@@ -240,14 +205,16 @@ punctuator:
   half_shape:
     'w' : { commit: ， }
     'v' : { commit: 。 }
-    'W' : [ 《, 〈, «, ‹, ˂, ˱ ]
-    'V' : [ 》, 〉, », ›, ˃, ˲ ]
+    # 'W' : [ 《, 〈, «, ‹, ˂, ˱ ]
+    # 'V' : [ 》, 〉, », ›, ˃, ˲ ]
     '/' : '/'
+    '"' : { pair: [ '“', '”' ] }
+    ':' : { commit: ： }
     '?' : { commit: ？ }
-    's' : { commit: ； }
-    'S' : { commit: ： }
-    'z' : { pair: [ '‘', '’' ] }
-    'Z' : { pair: [ '“', '”' ] }
+    # 's' : { commit: ； }
+    # 'S' : { commit: ： }
+    # 'z' : { pair: [ '‘', '’' ] }
+    # 'Z' : { pair: [ '“', '”' ] }
     '\' : { commit: 、 } #[ 、, '\', ＼ ]
     '|' : [ '|', ·, '·' , ｜, '§', '¦', '‖', ︴ ]
     '`' : [ '`', ·, ‵, ‶, ‷, ′, ″, ‴, ⁗ ]
@@ -266,7 +233,7 @@ punctuator:
     '_' : ——
     '+' : '+'
     '=' : '='
-    '[' : 【 #[ 【, 〔, 「, ［ ] #, 〚, 〘
-    ']' : 】 #[ 】, 〕, 」, ］] #, 〛, 〙
+    # '[' : 【 #[ 【, 〔, 「, ［ ] #, 〚, 〘
+    # ']' : 】 #[ 】, 〕, 」, ］] #, 〛, 〙
     '{' : [ "{", 〖, 『 , ｛ ]
     '}' : [ "}", 〗, 』 , ｝ ]
