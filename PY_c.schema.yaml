@@ -5,8 +5,6 @@ schema:
   schema_id: PY_c
   name: 双拼
   version: "0.18"
-  # dependencies:
-  #   - stroke
 
 switches: # 0 默认关，1 默认开
   - name: ascii_mode
@@ -41,7 +39,6 @@ engine:
     - punct_translator # 转换标点符号
     - script_translator # 脚本表转换
     - table_translator
-    - reverse_lookup_translator # 反查翻译器
     - lua_translator@calculator_translator # 简易计算器
   filters:
     - uniquifier  # 过滤重复的候选字，可能来自简繁转换
@@ -103,18 +100,17 @@ key_binder:
   bindings:
     # - { accept: semicolon, send: 2, when: has_menu } # 分号次选
     # - { when: has_menu, accept: apostrophe, send: 3 } # 引号三选
-    - { when: composing, accept: Tab, send: Escape } # tab清屏
-    - { when: has_menu, accept: minus, send: Page_Up } # - 向后翻页
-    - { when: has_menu, accept: equal, send: Page_Down } # = 向前翻页
+    # - { when: composing, accept: Tab, send: Escape } # tab清屏
+    # - { when: has_menu, accept: minus, send: Page_Up } # - 向后翻页
+    # - { when: has_menu, accept: equal, send: Page_Down } # = 向前翻页
     # - { when: composing, accept: bracketleft, send: Page_Up } # [ 后翻
     # - { when: composing, accept: bracketright, send: Page_Down } # ] 前翻
     # - { accept: "Control+h", toggle: extended_char, when: composing } # PC 自定字集开关
     # - { accept: "Control+j", toggle: chaifen, when: composing } # PC 拆分滤镜开关
     # - { when: has_menu, accept: Right, send: Down } # 右方向键 向后移动焦点
     # - { when: has_menu, accept: Left, send: Up } # 左方向键 向前移动焦点
-    - { when: always, accept: "Control+space" , toggle: ascii_mode } # 中英切换
-    - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
-    - { when: always, accept: "Shift+space" , toggle: full_shape } # 全半角切换
+    # - { when: always, accept: "Control+space" , toggle: ascii_mode } # 中英切换
+    # - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
 
 # custom_phrase:
 #   dictionary: ""
@@ -130,20 +126,6 @@ recognizer:
   patterns:
     punct: "^/([0-9]0?|[A-Za-z]+)$"
     expression: "^=.*$"
-    reverse_lookup: "`[a-z]*'?$"
-
-# 笔画反查
-reverse_lookup:
-  dictionary: stroke
-  enable_completion: true
-  prefix: "`"
-  suffix: "'"
-  tips: 〔笔画〕
-  preedit_format:
-    - xlit/hspnz/一丨丿丶ㄥ/
-  comment_format:
-    # - xform/([nl])v/$1ü/
-    - "xform/^/ /"
 
 menu:
   page_size: 5 #候选数量

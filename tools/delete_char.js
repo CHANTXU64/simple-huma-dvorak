@@ -131,19 +131,10 @@ function replaceCodeAndExpand3Code (lines, startRow, searchRe) {
 
 // 读取 orig yaml 文件
 // 将过滤后的内容重新组合为字符串
-let filteredLines = getFilteredLines('./orig.tiger.dict.yaml', 10);
-let filteredCSVContent = replaceCodeAndExpand3Code(filteredLines, 10, /\t.*\t/).join('\n');
+let filteredLines = getFilteredLines('./orig.tigress.dict.yaml', 20);
+let filteredCSVContent = replaceCode(filteredLines, 20, /\s[a-z',.;\t]*$/g).join('\n');
 // 将过滤后的内容写入新的 yaml 文件
-let filteredCSVFileName = './tiger.dict.yaml';
-fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
-console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
-
-// 读取 orig yaml 文件
-// 将过滤后的内容重新组合为字符串
-filteredLines = getFilteredLines('./orig.tigress.dict.yaml', 20);
-filteredCSVContent = replaceCode(filteredLines, 20, /\s[a-z',.;\t]*$/g).join('\n');
-// 将过滤后的内容写入新的 yaml 文件
-filteredCSVFileName = './tigress.dict.yaml';
+let filteredCSVFileName = './tigress.dict.yaml';
 fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
 console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
 
@@ -162,14 +153,6 @@ allLines = getAllLines('./orig.tigress_simp_ci.dict.yaml');
 filteredCSVContent = replaceCode(allLines, 18, /\s[a-z',.;]+/g).join('\n');
 // 将过滤后的内容写入新的 yaml 文件
 filteredCSVFileName = './tigress_simp_ci.dict.yaml';
-fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
-console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
-
-// 读取 orig yaml 文件
-// 将过滤后的内容重新组合为字符串
-filteredCSVContent = getFilteredLines('./orig.stroke.dict.yaml', 22).join('\n');
-// 将过滤后的内容写入新的 yaml 文件
-filteredCSVFileName = './stroke.dict.yaml';
 fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
 console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
 

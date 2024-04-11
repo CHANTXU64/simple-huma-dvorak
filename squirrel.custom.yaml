@@ -77,3 +77,8 @@ patch:
     # alpha: 0.0001
     # inline_candidate: true
 
+  key_binder:
+    bindings:
+      - { when: always, accept: "Control+space" , toggle: ascii_mode } # 中英切换
+      - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
+
