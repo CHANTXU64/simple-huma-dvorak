@@ -7,7 +7,7 @@ schema:
   description: |
     虎码词库
     敲 z 鍵進入拼音反查
-  name: "虎码词库"
+  name: "虎码"
   schema_id: tigress
   version: 0.9
 
@@ -22,9 +22,6 @@ switches: # 0 默认关，1 默认开
   - name: chaifen
     reset: 0 
     states: [ 拆隐, 拆显 ]
-  # - options: [ gb2312, gbk, utf8 ]
-  #   states: [ gb2312, GBK, UTF-8 ]
-  #   reset: 0
   - name: ascii_punct
     reset: 0
     states: [ 。，, ．， ]
@@ -52,10 +49,6 @@ engine:
     - punct_translator
     - reverse_lookup_translator #拼音反查
     - table_translator
-    # - history_translator@historyDM # 重复上屏 电脑
-    # - history_translator@historyDM2 # 重复上屏 电脑2
-    # - history_translator@historyDM3 # 重复上屏 电脑3
-    # - history_translator@historySJ # 重复上屏 手机
     - lua_translator@number_translator # 数字转大写
     - lua_translator@calculator_translator # 简易计算器
     - lua_translator@shijian2_translator # 高级时间
@@ -68,55 +61,29 @@ engine:
 
 speller:
   auto_clear: none # 3种选择， manual|auto|max_length 空码按下一键确认清屏|空码自动清|达到最长码时后码顶上清屏
-  # auto_select: true
-  # max_code_length: 4
-  alphabet: "[;,.'yxutrqponmlkjihgfedcba]"
-  # initials: "abcdefghijklmnopqrstuvwxyz;'"
-  # auto_select_pattern: ^;\w+ #自动上屏规则  对 [;] 引导的编码实行候选唯一自动上屏
-  # auto_select_pattern: ^[',.pyfgcrlaoeuidhtn;qjkxbm]{4}$ #自动上屏规则  对 [;] 引导的编码实行候选唯一自动上屏
-  # 若要添加四码上屏功能，在  ^;\w+ 后面 加上  |^\w{4}$  即可
+  auto_select: true
+  max_code_length: 5
+  alphabet: "[;,.'yxutrqponmlkjihgfedcbas]"
+  auto_select_pattern: ^s?[',.pyfgcrlaoeuidhtn;qjkxbm]{4}$ #自动上屏规则
 
 translator:
   dictionary: tigress
-  prism: tigress
-  initial_quality: 1    #该翻译器出字优先级别
+  # prism: tigress
+  # initial_quality: 1    #该翻译器出字优先级别
   enable_charset_filter: false
   enable_encoder: false
   enable_sentence: false
   encode_commit_history: false
   # max_phrase_length: 4
   enable_user_dict: false
-  enable_completion: false	# 编码提示 true 开启  false 关闭
-  comment_format:  #提示码自定义
-    - "xform/~/ /" #去掉编码提示前的~号
-    # - "xform/^/ /" #提示前面 +间距
-
-# encode:
-#   tag: encode
-#   prefix: "'"    
-#   tips: 【手動造詞】
-#   closing_tips: 【造詞關閉】
-
-# encode_sentence:
-#   __include: translator
-#   tag: encode
-#   enable_sentence: true
-#   enable_user_dict: true
-#   enable_completion: true
+  enable_completion: true # 编码提示 true 开启  false 关闭
+  comment_format: #提示码自定义
+    - "xform/.*//" #去掉编码提示
 
 reverse_lookup:
   dictionary: PY_c
   prefix: "z"
-  tips: "〔拼音〕"
-  # preedit_format:
-  #   - "xform/([nl])v/$1ü/"
-  #   - "xform/([nl])ue/$1üe/"
-  #   - "xform/([jqxy])v/$1u/"
-  # comment_format:
-  #   - "xform/^/ /"
-  # suffix: "'"
-
-
+  tips: "〔双拼〕"
 
 key_binder:
   #  import_preset: default
@@ -144,13 +111,11 @@ recognizer:
   # import_preset: default
   patterns:
     punct: "^/([0-9]0?|[A-Za-z]+)$"
-    # uppercase: "" #中文状态大写锁定直接上屏
     reverse_lookup: "^z[a-z;]*$"
     expression: "^=.*$"
-    # encode: "^'([a-z]+'?)*$"
 
-# menu:
-  # page_size: 9 #候选数量
+menu:
+  page_size: 4 #候选数量
   # alternative_select_labels: [ ㊀, ㊁, ㊂, ㊃, ㊄, ㊅, ㊆, ㊇, ㊈ ]  #自定义候选序号显示符
 
 # 拆分滤镜

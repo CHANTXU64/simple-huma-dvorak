@@ -3,10 +3,10 @@
 
 schema:
   schema_id: PY_c
-  name: 拼音++
+  name: 双拼
   version: "0.18"
-  dependencies:
-    - stroke
+  # dependencies:
+  #   - stroke
 
 switches: # 0 默认关，1 默认开
   - name: ascii_mode
@@ -40,26 +40,15 @@ engine:
     # - echo_translator # 没有其他结果时，创建一个与编码串一样的候选项
     - punct_translator # 转换标点符号
     - script_translator # 脚本表转换
-    # - table_translator@custom_phrase
     - table_translator
     - reverse_lookup_translator # 反查翻译器
-    - history_translator@historyDM # 历史上屏 电脑
-    - history_translator@historyDM2 # 历史上屏 电脑2
-    - history_translator@historyDM3 # 历史上屏 电脑3
-    - history_translator@historySJ # 历史上屏 手机  
-    - lua_translator@number_translator # 数字转大写
     - lua_translator@calculator_translator # 简易计算器
-    - lua_translator@shijian2_translator # 高级时间
-
-
   filters:
     - uniquifier  # 过滤重复的候选字，可能来自简繁转换
 
 speller:
   alphabet: "['zyxwvutsrqponmlkjihgfedcba;]" # 输入范围 码元
   delimiter: " '" 
-  # auto_select: true
-  # auto_select_pattern: ^;\w+ #自动上屏规则 对 [;] 开头的编码实行候选唯一自动上屏
   algebra:
     - abbrev/^([a-z]).+$/$1/
     - abbrev/^([zcs]h).+$/$1/
@@ -142,22 +131,6 @@ recognizer:
     punct: "^/([0-9]0?|[A-Za-z]+)$"
     expression: "^=.*$"
     reverse_lookup: "`[a-z]*'?$"
-
-
-historyDM:
-  input: "["
-  size: 1
-  initial_quality: 999
-
-historyDM2:
-  input: "'"
-  size: 1
-  initial_quality: -999
-
-historyDM3:
-  input: "]"
-  size: 1
-  initial_quality: 999
 
 # 笔画反查
 reverse_lookup:

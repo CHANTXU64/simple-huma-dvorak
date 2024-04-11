@@ -150,7 +150,7 @@ console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
 // 读取 orig yaml 文件
 // 将过滤后的内容重新组合为字符串
 let allLines = getAllLines('./orig.tigress_ci.dict.yaml');
-filteredCSVContent = replaceCode(allLines, 19, /\s[a-z',.;]+/g).join('\n');
+filteredCSVContent = replaceCode(allLines, 18, /\s[a-z',.;]+/g).join('\n');
 // 将过滤后的内容写入新的 yaml 文件
 filteredCSVFileName = './tigress_ci.dict.yaml';
 fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');
@@ -159,7 +159,7 @@ console.log('过滤完成，结果已写入文件：', filteredCSVFileName);
 // 读取 orig yaml 文件
 // 将过滤后的内容重新组合为字符串
 allLines = getAllLines('./orig.tigress_simp_ci.dict.yaml');
-filteredCSVContent = replaceCode(allLines, 19, /\s[a-z',.;]+/g).join('\n');
+filteredCSVContent = replaceCode(allLines, 18, /\s[a-z',.;]+/g).join('\n');
 // 将过滤后的内容写入新的 yaml 文件
 filteredCSVFileName = './tigress_simp_ci.dict.yaml';
 fs.writeFileSync(filteredCSVFileName, filteredCSVContent, 'utf-8');

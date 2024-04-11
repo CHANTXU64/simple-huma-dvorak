@@ -6,7 +6,6 @@
 #   rime_version: 1.7.3
 patch:
   schema_list:
-    - {schema: tiger}
     - {schema: tigress}
     - {schema: PY_c}
   "switcher/hotkeys":  # 将默认的 F4热键 更改为ctrl+~
