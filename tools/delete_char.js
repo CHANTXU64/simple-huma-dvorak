@@ -52,7 +52,7 @@ function getFilteredLines (fileName, startRow) {
     return line;
   }).filter(line => line !== null); // 过滤掉被删除的行（为 null 的行）
   // 输出被删除的行的首个汉字
-  console.log('被删除的:\n', deletedChineseCharacters.join(''));
+  // console.log('被删除的:\n', deletedChineseCharacters.join(''));
   return filteredLines;
 }
 
