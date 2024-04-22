@@ -62,9 +62,9 @@ translator:
 key_binder:
   bindings:
     - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
-    - { when: composing, accept: Control+h, send: BackSpace }
-    - { when: has_menu, accept: Down, send: Page_Down }
-    - { when: has_menu, accept: Up, send: Page_Up }
+    - { when: composing, accept: "Control+h", send: BackSpace }
+    - { when: has_menu, accept: "Control+n", send: Page_Down }
+    - { when: has_menu, accept: "Control+p", send: Page_Up }
 
 recognizer:
   import_preset: default
