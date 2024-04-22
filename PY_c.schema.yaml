@@ -62,6 +62,7 @@ translator:
 key_binder:
   bindings:
     - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
+    - { when: composing, accept: Control+h, send: BackSpace }
 
 recognizer:
   import_preset: default

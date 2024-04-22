@@ -84,6 +84,7 @@ key_binder:
   bindings:
     - { when: has_menu, accept: s, send: 2} # 分号次选
     - { when: has_menu, accept: minus, send: 3 } # 引号三选
+    - { when: composing, accept: Control+h, send: BackSpace }
     - { when: composing, accept: "Control+comma", toggle: extended_char } # PC 自定字集开关
     - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
 
