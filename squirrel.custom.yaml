@@ -1,84 +1,85 @@
 patch:
   preset_color_schemes:
-    mac_light:
-      name: Mac浅色
-      horizontal: true             # true横排，false竖排
-      candidate_format: "%c\u2005%@"   # 用 1/6 em 空格 U+2005 来控制编号 %c 和候选词 %@ 前后的空间
-      corner_radius: 5                             # 窗口圆角
-      hilited_corner_radius: 5                     # 高亮圆角
-      line_spacing: 10                             # 行间距(适用于竖排)
-      border_height: 4                             # 窗口上下高度，大于圆角半径才生效
-      border_width: 4                              # 窗口左右宽度，大于圆角半径才生效
-      # font_face: "PingFangSC"                      # 候选词字体
-      # font_point: 16                               # 候选字大小
-      # label_font_point: 13                         # 候选编号大小
-      text_color: 0x424242                    # 拼音行文字颜色
-      back_color: 0xFFFFFF                    # 候选条背景色
-      border_color: 0xFFFFFF                  # 边框色
-      label_color: 0x999999                   # 预选栏编号颜色
-      candidate_text_color: 0x3c3c3c          # 预选项文字颜色
-      comment_text_color: 0x999999            # 拼音等提示文字颜色
-      hilited_text_color: 0x999999            # 高亮拼音 (需要开启内嵌编码)
-      hilited_back_color: 0xD75A00            # 第一候选项背景背景色
-      hilited_candidate_text_color: 0xFFFFFF  # 第一候选项文字颜色
-      hilited_candidate_label_color: 0xFFFFFF # 第一候选项编号颜色
-      hilited_comment_text_color: 0x999999    # 注解文字高亮
-      inline_preedit: true
+    macos14:
+      name: "高仿 macOS 14"
+      author: "Lufs X <i@isteed.cc>"
 
-    mac_dark:
-      name: Mac深色
-      horizontal: true             # true横排，false竖排
-      # candidate_format: "%c %@ "   # 用 1/6 em 空格 U+2005 来控制编号 %c 和候选词 %@ 前后的空间
-      corner_radius: 5                             # 窗口圆角
-      hilited_corner_radius: 5                     # 高亮圆角
-      line_spacing: 10                              # 行间距(适用于竖排)
-      border_height: 4                             # 窗口上下高度，大于圆角半径才生效
-      border_width: 4                              # 窗口左右宽度，大于圆角半径才生效 
-      # font_face: "PingFangSC"                      # 候选词字体
-      # font_point: 16                               # 候选字大小
-      # label_font_point: 13                         # 候选编号大小
-      text_color: 0x424242                    # 拼音行文字颜色
-      back_color: 0x252a2e                    # 候选条背景色
-      border_color: 0x050505                  # 边框色
-      label_color: 0x999999                   # 预选栏编号颜色
-      candidate_text_color: 0xe9e9ea          # 预选项文字颜色
-      comment_text_color: 0x999999            # 拼音等提示文字颜色
-      hilited_text_color: 0x999999            # 高亮拼音 (需要开启内嵌编码)
-      hilited_back_color: 0xD75A00            # 第一候选项背景背景色
-      hilited_candidate_text_color: 0xFFFFFF  # 第一候选项文字颜色
-      hilited_candidate_label_color: 0xFFFFFF # 第一候选项编号颜色
-      hilited_comment_text_color: 0x999999    # 注解文字高亮
-      inline_preedit: true
+      font_face: "PingFangSC-Regular"
+      font_point: 16
+      label_font_face: "PingFangSC-Regular"
+      label_font_point: 8
+      comment_font_face: "PingFangSC-Regular"
+      comment_font_point: 13
 
+      label_format: "%s"
+      candidate_format: "%c\u2003\u2003\u2003%@\u2004\u2001"
+      candidate_list_layout: linear
+
+      corner_radius: 4
+      hilited_corner_radius: -1
+      border_height: -4
+      border_width: 4
+
+      color_space: display_p3
+      back_color: 0xE7E8EA
+      border_color: 0xE7E8EA
+      candidate_text_color: 0x464647
+      comment_text_color: 0x3F000000
+      label_color: 0x7F7F7F
+      hilited_candidate_back_color: 0xD05925
+      hilited_candidate_text_color: 0xFFFFFF
+      hilited_comment_text_color: 0xDCDCDC
+      hilited_candidate_label_color: 0xFFFFFF
+      text_color: 0x3F000000
+      hilited_text_color: 0xD8000000
+
+    macos14_dark:
+      name: "高仿暗色 macOS 14"
+      author: "Lufs X <i@isteed.cc>"
+
+      font_face: "PingFangSC-Regular"
+      font_point: 16
+      label_font_face: "PingFangSC-Regular"
+      label_font_point: 8
+      comment_font_face: "PingFangSC-Regular"
+      comment_font_point: 13
+
+      label_format: "%s"
+      candidate_format: "%c\u2003\u2003\u2003%@\u2004\u2001"
+      candidate_list_layout: linear
+
+      corner_radius: 4
+      hilited_corner_radius: -1
+      border_height: -4
+      border_width: 4
+
+      color_space: display_p3
+      back_color: 0x555557
+      border_color: 0x0C0C0C
+      candidate_text_color: 0xEEEEEE
+      comment_text_color: 0x80FFFFFF
+      label_color: 0x7C7C7C
+      hilited_candidate_back_color: 0xCA5824
+      hilited_candidate_text_color: 0xFFFFFF
+      hilited_comment_text_color: 0xF0F0F0
+      hilited_candidate_label_color: 0xFFFFFF
+      text_color: 0x3F000000
+      hilited_text_color: 0xD8000000
+
+  show_notifications_when: never
   show_notifications_via_notification_center: true
 
   style:
-    color_scheme: mac_light
-    # color_scheme_dark: mac_dark
-    # capture_type: none
-    # color_font: true
-    comment_font_face: "PingFangSC"
-    comment_font_point: 12 #滤镜字号
-    # display_tray_icon: false
-    font_face: "PingFangSC"
-    # font_face: "PingFangSC, Apple Color Emoji"
-    font_point: 16 #主字体字号
-    label_font_face: "PingFangSC"
-    label_font_point: 8 #标号字号
-    label_format: "%s"
-    # layout:
-    #   min_width: 85
-    # corner_radius: 5
-    # hilited_corner_radius: 5
-    # line_spacing: 8
-    # hilite_spacing: 6
-    # spacing: 12
+    color_scheme: macos14
+    color_scheme_dark: macos14_dark
+    translucency: true # 背景半透明总开关，不需要关掉即可
+    horizontal: true             # true横排，false竖排
+    text_orientation: horizontal # horizontal | vertical
+    inline_preedit: true
+
+    line_spacing: 1
+    spacing: 10
+
     # 鼠须管盲打，嵌入首选，删除下面两行的#号，即可生效
     # alpha: 0.0001
-    # inline_candidate: true
-
-  key_binder:
-    bindings:
-      - { when: always, accept: "Control+space" , toggle: ascii_mode } # 中英切换
-      - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
 
