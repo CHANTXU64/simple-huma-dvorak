@@ -15,14 +15,14 @@ patch:
       candidate_format: "%c\u2003\u2003\u2003%@\u2004\u2001"
       candidate_list_layout: linear
 
-      corner_radius: 4
+      corner_radius: 8
       hilited_corner_radius: -1
-      border_height: -4
-      border_width: 4
+      border_height: -5
+      border_width: 3
 
       color_space: display_p3
-      back_color: 0xE7E8EA
-      border_color: 0xE7E8EA
+      back_color: 0xEFEFEF
+      border_color: 0xEFEFEF
       candidate_text_color: 0x464647
       comment_text_color: 0x3F000000
       label_color: 0x7F7F7F
@@ -79,6 +79,8 @@ patch:
 
     line_spacing: 1
     spacing: 10
+
+    memorize_size: false
 
     # 鼠须管盲打，嵌入首选，删除下面两行的#号，即可生效
     # alpha: 0.0001
