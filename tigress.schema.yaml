@@ -55,10 +55,10 @@ engine:
 
 speller:
   auto_clear: none # 3种选择， manual|auto|max_length 空码按下一键确认清屏|空码自动清|达到最长码时后码顶上清屏
-  auto_select: true
+  # auto_select: true
   max_code_length: 5
   alphabet: ";,.'yxutrqponmlkjihgfedcbas"
-  auto_select_pattern: ^s?[',.pyfgcrlaoeuidhtn;qjkxbm]{4}$ #自动上屏规则
+  # auto_select_pattern: ^s?[',.pyfgcrlaoeuidhtn;qjkxbm]{4}$ #自动上屏规则
 
 translator:
   dictionary: tigress
@@ -82,8 +82,8 @@ reverse_lookup:
 
 key_binder:
   bindings:
-    - { when: has_menu, accept: s, send: 2} # 分号次选
-    - { when: has_menu, accept: minus, send: 3 } # 引号三选
+    - { when: has_menu, accept: "Control+s", send: 2} # 分号次选
+    # - { when: has_menu, accept: minus, send: 3 } # 引号三选
     - { when: has_menu, accept: "Control+n", send: Page_Down }
     - { when: has_menu, accept: "Control+p", send: Page_Up }
     - { when: composing, accept: "Control+h", send: BackSpace }

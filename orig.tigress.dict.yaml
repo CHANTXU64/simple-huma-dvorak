@@ -130,7 +130,7 @@ import_tables:
 看	256	uqm
 事	620787	fd
 事	256	fdbv
-如	613530	b	bd
+如	613530	bd
 如	256	bdk
 用	607554	ty
 小	594760	yx
@@ -142,7 +142,8 @@ import_tables:
 行	256	px
 只	576694	dh
 只	256	dhb
-好	575316	bh
+好	575316	b
+好	575315	bh
 好	256	bhi
 成	575315	na
 成	256	nae
