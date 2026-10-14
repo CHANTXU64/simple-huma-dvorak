@@ -86,19 +86,37 @@ end
 
 -- ---------- Rime 接入 ----------
 
--- 查某个码，返回权重最高的一条 {text=, weight=原始权重}，没有则 nil
-local function top_entry(mem, code)
-  local best
-  if mem:dict_lookup(code, false, 50) then
+-- 查某个码，返回所有词条 { {text=, weight=原始权重}, ... }；
+-- predictive 为 true 时连补全（以它开头的更长的码）一起查
+function M.entries(mem, code, predictive)
+  local out = {}
+  if mem:dict_lookup(code, predictive or false, predictive and 300 or 50) then
     for entry in mem:iter_dict() do
-      if not best or entry.weight > best.weight then
-        best = { text = entry.text, weight = entry.weight }
-      end
+      out[#out + 1] = { text = entry.text, weight = math.exp(entry.weight - LOG_OFFSET) }
     end
   end
-  if best then best.weight = math.exp(best.weight - LOG_OFFSET) end
+  return out
+end
+
+-- 同上，只返回权重最高的一条，没有则 nil
+function M.top_entry(mem, code, predictive)
+  local best
+  for _, e in ipairs(M.entries(mem, code, predictive)) do
+    if not best or e.weight > best.weight then best = e end
+  end
   return best
 end
+
+-- 读方案里 <ns>/ 下的参数，缺省用 DEFAULTS
+function M.load_cfg(env, ns)
+  local cfg = {}
+  for k, v in pairs(DEFAULTS) do
+    local ok, val = pcall(function() return env.engine.schema.config:get_double(ns .. "/" .. k) end)
+    cfg[k] = (ok and val and val > 0) and val or v
+  end
+  return cfg
+end
+
 
 local F = {}
 
@@ -110,11 +128,7 @@ function F.init(env)
   else
     log.warning("swap_fix: Memory init failed: " .. tostring(mem))
   end
-  env.cfg = {}
-  for k, v in pairs(DEFAULTS) do
-    local ok2, val = pcall(function() return env.engine.schema.config:get_double("swap_fix/" .. k) end)
-    env.cfg[k] = (ok2 and val and val > 0) and val or v
-  end
+  env.cfg = M.load_cfg(env, "swap_fix")
 end
 
 function F.fini(env)
@@ -129,10 +143,10 @@ local function promoted(env)
   if #code ~= CODE_LEN or not env.mem then return nil end
   local seg = ctx.composition:back()
   if not seg then return nil end
-  local typed = top_entry(env.mem, code)
+  local typed = M.top_entry(env.mem, code)
   local best, best_code
   for _, sc in ipairs(M.swaps(code)) do
-    local e = top_entry(env.mem, sc)
+    local e = M.top_entry(env.mem, sc)
     if e and (not best or e.weight > best.weight) then best, best_code = e, sc end
   end
   if not M.should_swap(typed, best, env.cfg) then return nil end

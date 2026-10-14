@@ -31,6 +31,9 @@ switches: # 0 默认关，1 默认开
   - name: punct_style
     reset: 0
     states: [ 'chinese', 'english' ]
+  - name: omit_fix  #只敲了一简字那一个键、漏了第二键时，自动补键纠正（见 lua/omit_fix.lua）
+    reset: 1
+    states: [ 补键关, 补键开 ]
   - name: typing_log  #把输入过程记成本地日志，供事后分析（见 lua/typing_log.lua）
     reset: 1
     states: [ 记录关, 记录开 ]
@@ -64,6 +67,7 @@ engine:
     - lua_filter@core2022  #自定义字集过滤lua；放在最上面完美解决简繁滤镜出错的问题
     - simplifier@chaifen #拆分滤镜
     - lua_filter@add_user_word #分段上屏后敲整词码，选中即自动加词（放在最后）
+    - lua_filter@omit_fix #只敲了一简字的一个键、漏了第二键时，自动补上并把常用词放第一位（有开关 omit_fix）
     - lua_filter@swap_fix #左右手按快了颠倒相邻两键时，自动把对调后更常用的词放第一位（有开关 swap_fix）
     - uniquifier #过滤重复
 
@@ -73,6 +77,13 @@ swap_fix: #左右手按快了颠倒相邻两键时的自动纠正，规则见 lu
   ratio_low: 3 #凑数的词：对调后的词常用几倍以上就纠正
   ratio_high: 10 #权重到上限的词：要常用几倍以上才纠正
   min_target_weight: 500 #对调后的词本身至少要有这么常用
+
+omit_fix: #一简字漏第二键时的自动补键，规则见 lua/omit_fix.lua（参数含义同 swap_fix:，缺省值也相同，可单独调）
+  max_typed_weight: 400
+  low_weight: 60
+  ratio_low: 3
+  ratio_high: 10
+  min_target_weight: 500
 
 speller:
   auto_clear: none # 3种选择， manual|auto|max_length 空码按下一键确认清屏|空码自动清|达到最长码时后码顶上清屏
