@@ -69,26 +69,31 @@ patch:
   show_notifications_when: never
   show_notifications_via_notification_center: true
 
-  # 鼠须管默认让下面这些应用（终端、编辑器、启动器）以 ascii_mode 启动，而 librime 在
-  # ascii_mode 下会禁用所有 when: has_menu 的按键绑定（s 次选、Ctrl+n/p 翻页），
-  # 于是 s 变成"顶字上屏 + 打出 s"。本方案没有 ascii_composer，ascii_mode 本来就不起
-  # 中英切换作用，统一关掉。只改 ascii_mode，各应用原有的 no_inline 等选项不动。
-  "app_options/com.apple.Spotlight/ascii_mode": false
-  "app_options/com.alfredapp.Alfred/ascii_mode": false
-  "app_options/com.runningwithcrayons.Alfred-2/ascii_mode": false
-  "app_options/com.blacktree.Quicksilver/ascii_mode": false
-  "app_options/com.apple.Terminal/ascii_mode": false
-  "app_options/com.googlecode.iterm2/ascii_mode": false
-  "app_options/org.vim.MacVim/ascii_mode": false
-  "app_options/com.apple.dt.Xcode/ascii_mode": false
-  "app_options/com.barebones.textwrangler/ascii_mode": false
-  "app_options/com.macromates.TextMate.preview/ascii_mode": false
-  "app_options/com.github.atom/ascii_mode": false
-  "app_options/com.microsoft.VSCode/ascii_mode": false
-  "app_options/com.sublimetext.2/ascii_mode": false
-  "app_options/org.gnu.Aquamacs/ascii_mode": false
-  "app_options/org.gnu.Emacs/ascii_mode": false
-  "app_options/co.zeit.hyper/ascii_mode": false
+  # 按应用决定进入时的中/西文状态，代替原来 Hammerspoon 的应用监听。
+  # 这里整体替换了鼠须管自带的 app_options：没列出的应用不强制，保持上次的状态；
+  # 自带的 Chrome/Edge/Telegram 兼容设置（inline）照抄保留。
+  app_options:
+    # 进入时用英文
+    com.googlecode.iterm2:
+      ascii_mode: true
+      no_inline: true
+    org.gnu.Emacs:                      # Emacs 里用自己内置的 Rime 输入法
+      ascii_mode: true
+      no_inline: true
+    com.pixelmatorteam.pixelmator.x:    # Pixelmator Pro
+      ascii_mode: true
+    # 进入时用中文
+    com.tencent.xinWeChat:              # 微信
+      ascii_mode: false
+    com.lobehub.lobehub-desktop:        # LobeChat
+      ascii_mode: false
+    # 鼠须管自带的兼容设置
+    com.google.Chrome:
+      inline: true
+    com.microsoft.edgemac:
+      inline: true
+    ru.keepcoder.Telegram:
+      inline: true
 
   style:
     color_scheme: macos14
