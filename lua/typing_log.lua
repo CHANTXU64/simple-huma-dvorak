@@ -67,6 +67,23 @@ local function enabled(ctx)
   return ctx:get_option("typing_log") and not ctx:get_option("ascii_mode")
 end
 
+-- 日志文件句柄常开：每条事件只做一次 write，不用每次 open/close（两者在实测里差一个数量级）。
+-- 日期变了、或文件被删/改名了就重开。
+local cur = { path = nil, f = nil }
+
+local function log_file(path)
+  -- 只写文件读不了，用 rename 到自己来判断它存不存在（不需要读权限）
+  local existed = os.rename(path, path)
+  if cur.f and cur.path == path and existed then return cur.f end
+  if cur.f then pcall(function() cur.f:close() end); cur.f = nil end
+  local f = io.open(path, "a")
+  if not f then return nil end
+  f:setvbuf("line") -- 每行写完立刻交给系统，进程被杀也不丢
+  if not existed then os.execute('chmod 200 "' .. path .. '"') end
+  cur.path, cur.f = path, f
+  return f
+end
+
 -- 写一条事件。出任何错都吞掉，绝不影响输入
 function M.event(env, ev)
   pcall(function()
@@ -75,14 +92,8 @@ function M.event(env, ev)
     ev.ts = os.time()
     local app = ctx:get_property("client_app")
     if app and app ~= "" then ev.app = app end
-    local path = log_path(os.date("%Y-%m-%d", ev.ts))
-    -- 只写文件读不了，用 rename 到自己来判断它存不存在（不需要读权限）
-    local existed = os.rename(path, path)
-    local f = io.open(path, "a")
-    if not f then return end
-    f:write(M.encode(ev), "\n")
-    f:close()
-    if not existed then os.execute('chmod 200 "' .. path .. '"') end
+    local f = log_file(log_path(os.date("%Y-%m-%d", ev.ts)))
+    if f then f:write(M.encode(ev), "\n") end
   end)
 end
 

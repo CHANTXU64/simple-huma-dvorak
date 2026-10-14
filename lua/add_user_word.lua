@@ -191,6 +191,16 @@ end
 local function user_dir() return rime_api.get_user_data_dir() end
 local function words_path() return user_dir() .. "/user_words.tsv" end
 
+-- 单字码表：进程级缓存。读一遍 tigress.dict.yaml 要 ~100ms，缓存若挂在输入会话上，
+-- 每新开一个会话（重启 Squirrel、切到新应用）第一次敲满 4 码都要卡一下
+local char_codes_cache
+local function get_char_codes()
+  if not char_codes_cache then
+    char_codes_cache = M.load_char_codes(user_dir() .. "/tigress.dict.yaml")
+  end
+  return char_codes_cache
+end
+
 local F = {}
 
 -- 当前菜单里"待确认"的候选：{ [词] = 编码 }，选中时据此判断是否要加词
@@ -232,11 +242,9 @@ local function extra_candidates(ctx, env)
       if #records >= MAX_BACK then break end
     end
     if #records > 0 then
-      if not env.char_codes then
-        env.char_codes = M.load_char_codes(user_dir() .. "/tigress.dict.yaml")
-      end
-      if env.char_codes then
-        for _, m in ipairs(M.match_suffixes(records, code, env.char_codes, MAX_BACK)) do
+      local char_codes = get_char_codes()
+      if char_codes then
+        for _, m in ipairs(M.match_suffixes(records, code, char_codes, MAX_BACK)) do
           pending[m.word] = code
           out[#out + 1] = { text = m.word, type = "user_word_pending", comment = "+" }
         end
@@ -265,5 +273,8 @@ function F.func(input, env)
     end
   end)
 end
+
+-- 模块加载时就读好（Squirrel 启动或部署时），敲字时不用再等；失败了就留给第一次用到时再试
+pcall(get_char_codes)
 
 return { F = F, _M = M }
