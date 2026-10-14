@@ -34,6 +34,7 @@ switches: # 0 默认关，1 默认开
 
 engine:
   processors:
+    - lua_processor@ascii_toggle
     - ascii_composer
     - recognizer
     - key_binder
@@ -97,7 +98,7 @@ key_binder:
     - { when: composing, accept: "Control+comma", toggle: extended_char } # PC 自定字集开关
     # - { when: always, accept: "Control+period" , toggle: punct_style } # 中英标点切换
     - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
-    - { when: always, accept: "Control+Alt+space", toggle: ascii_mode } # 中/西文切换（Karabiner 把 Ctrl+Space 改成 Ctrl+Option+Space，Emacs 除外）
+    - { when: always, accept: "Control+Alt+space", toggle: ascii_mode } # 中/西文切换（兜底；正常由 lua_processor@ascii_toggle 先处理，它会先上屏已敲的字母）
 
 recognizer:
   patterns:
