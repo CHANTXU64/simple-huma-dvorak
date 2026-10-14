@@ -21,6 +21,7 @@
 | `add_user_word.lua` | 先分段上屏，再敲整词码，候选最后会冒出拼好的词，选中即加入 `user_words.tsv`。只追加在最后，不改词序 |
 | `ascii_toggle.lua` | Ctrl+Space 切换中/西文；敲到一半时先把已敲的字母上屏再切换（Karabiner 把 Ctrl+Space 改成 Ctrl+右Option+Space） |
 | `swap_fix.lua` | 左右手按快了、相邻两键顺序颠倒时自动纠正，见下 |
+| `typing_log.lua` | 把输入过程记成本地日志，供事后分析，见最后一节 |
 
 另外：右 Shift 单击也能切中/西文（`commit_code`），各应用的默认中/西文状态在 `squirrel.custom.yaml` 的 `app_options` 里。
 
@@ -55,3 +56,30 @@ swap_fix:
 想更保守就调小 `max_typed_weight` 或调大 `ratio_*`。
 
 注意：词条权重在 librime 里存的是 `ln(原始权重) + ln(1e-8)`，`swap_fix.lua` 里的 `LOG_OFFSET` 就是为此而设。
+
+## typing_log：输入日志与分析
+
+`lua/typing_log.lua` 把输入过程写到 `~/Library/Rime/typing_log.YYYY-MM-DD.jsonl`（每行一个 JSON，只在本机，保留 60 天），
+用来找出自己常犯的错、优化码表和规则。开关 `typing_log` 在 Rime 方案菜单里（默认开），关掉后什么都不写；西文模式下的按键不记。
+
+记录的事件：
+
+| `e` | 含义 |
+|---|---|
+| `commit` | 上屏的词 `text`、当时敲的码 `code`、选了第几个候选 `idx`（从 0 数）；Squirrel 1.1.2 取不到当前应用，所以没有应用字段 |
+| `bs` | 退格。`composing=false` 是敲码之外的退格（多半在删刚上屏的字），`true` 时 `code` 是退格前的码 |
+| `cancel` | 敲了码按 Esc 取消 |
+| `swap_fix` | swap_fix 自动纠正了一次 |
+
+做不到的：Rime 看不到应用里的文本，鼠标选中删除、Cmd+Delete 之类的删除记不到，只能看到按了 Backspace。
+
+分析：
+
+```sh
+python3 -I tools/typing_log_report.py            # 默认读 ~/Library/Rime，可加 --days 7
+```
+
+脚本靠"上屏 → 若干退格 → 再上屏"的序列还原纠错，按码的差异分类（左右手换位 / 同手换位 / 错一个键 …），
+列出出现最多的"打出→改成"，并统计 swap_fix 的命中和疑似误伤。也可以直接把日志文件交给 AI 去分析。
+
+注意：日志里有你上屏的全部中文内容，不要提交、不要上传；想清空直接删 `typing_log.*.jsonl`。

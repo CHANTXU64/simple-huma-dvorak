@@ -138,6 +138,9 @@ local function promoted(env)
   if not M.should_swap(typed, best, env.cfg) then return nil end
   log.info(string.format("swap_fix: %s(%s %.0f) -> %s(%s %.0f)", code,
     typed and typed.text or "-", typed and typed.weight or 0, best_code, best.text, best.weight))
+  pcall(function()
+    require("typing_log").event(env, { e = "swap_fix", code = code, from = typed and typed.text or nil, to = best.text })
+  end)
   return Candidate("swap_fix", seg.start, seg._end, best.text, "↔")
 end
 

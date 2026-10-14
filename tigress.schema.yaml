@@ -31,12 +31,16 @@ switches: # 0 默认关，1 默认开
   - name: punct_style
     reset: 0
     states: [ 'chinese', 'english' ]
+  - name: typing_log  #把输入过程记成本地日志，供事后分析（见 lua/typing_log.lua）
+    reset: 1
+    states: [ 记录关, 记录开 ]
   - name: swap_fix  #左右手按快了颠倒相邻两键时，自动纠正（见 lua/swap_fix.lua）
     reset: 1
     states: [ 纠错关, 纠错开 ]
 
 engine:
   processors:
+    - lua_processor@typing_log #只记录不拦截，必须放最前面
     - lua_processor@ascii_toggle
     - ascii_composer
     - recognizer
