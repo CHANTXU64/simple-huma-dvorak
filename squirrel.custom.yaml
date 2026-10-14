@@ -69,6 +69,27 @@ patch:
   show_notifications_when: never
   show_notifications_via_notification_center: true
 
+  # 鼠须管默认让下面这些应用（终端、编辑器、启动器）以 ascii_mode 启动，而 librime 在
+  # ascii_mode 下会禁用所有 when: has_menu 的按键绑定（s 次选、Ctrl+n/p 翻页），
+  # 于是 s 变成"顶字上屏 + 打出 s"。本方案没有 ascii_composer，ascii_mode 本来就不起
+  # 中英切换作用，统一关掉。只改 ascii_mode，各应用原有的 no_inline 等选项不动。
+  "app_options/com.apple.Spotlight/ascii_mode": false
+  "app_options/com.alfredapp.Alfred/ascii_mode": false
+  "app_options/com.runningwithcrayons.Alfred-2/ascii_mode": false
+  "app_options/com.blacktree.Quicksilver/ascii_mode": false
+  "app_options/com.apple.Terminal/ascii_mode": false
+  "app_options/com.googlecode.iterm2/ascii_mode": false
+  "app_options/org.vim.MacVim/ascii_mode": false
+  "app_options/com.apple.dt.Xcode/ascii_mode": false
+  "app_options/com.barebones.textwrangler/ascii_mode": false
+  "app_options/com.macromates.TextMate.preview/ascii_mode": false
+  "app_options/com.github.atom/ascii_mode": false
+  "app_options/com.microsoft.VSCode/ascii_mode": false
+  "app_options/com.sublimetext.2/ascii_mode": false
+  "app_options/org.gnu.Aquamacs/ascii_mode": false
+  "app_options/org.gnu.Emacs/ascii_mode": false
+  "app_options/co.zeit.hyper/ascii_mode": false
+
   style:
     color_scheme: macos14
     color_scheme_dark: macos14_dark

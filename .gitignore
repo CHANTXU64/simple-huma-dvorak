@@ -1,2 +1,5 @@
 .DS_Store
 build
+
+# 个人词库，不要提交到公开仓库
+tigress_user.dict.yaml
