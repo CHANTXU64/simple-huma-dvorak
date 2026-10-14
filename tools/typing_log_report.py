@@ -40,7 +40,11 @@ def load(d, days):
     events = []
     cutoff = time.time() - days * 86400 if days else 0
     for f in sorted(glob.glob(os.path.join(d, "typing_log.*.jsonl"))):
-        with open(f, encoding="utf-8") as fh:
+        try:
+            fh = open(f, encoding="utf-8")
+        except PermissionError:
+            sys.exit(f"日志是只写的（0200），先 chmod u+r {os.path.dirname(f)}/typing_log.*.jsonl，看完再 chmod u-r 回去")
+        with fh:
             for line in fh:
                 try:
                     ev = json.loads(line)

@@ -59,7 +59,7 @@ swap_fix:
 
 ## typing_log：输入日志与分析
 
-`lua/typing_log.lua` 把输入过程写到 `~/Library/Rime/typing_log.YYYY-MM-DD.jsonl`（每行一个 JSON，只在本机，保留 60 天），
+`lua/typing_log.lua` 把输入过程写到 `~/Library/Rime/typing_log.YYYY-MM-DD.jsonl`（每行一个 JSON，只在本机，不会过期；文件创建时权限是 0200，只写，属主也读不了），
 用来找出自己常犯的错、优化码表和规则。开关 `typing_log` 在 Rime 方案菜单里（默认开），关掉后什么都不写；西文模式下的按键不记。
 
 记录的事件：
@@ -73,13 +73,15 @@ swap_fix:
 
 做不到的：Rime 看不到应用里的文本，鼠标选中删除、Cmd+Delete 之类的删除记不到，只能看到按了 Backspace。
 
-分析：
+分析前先给自己开读权限，看完再收回：
 
 ```sh
+chmod u+r ~/Library/Rime/typing_log.*.jsonl
 python3 -I tools/typing_log_report.py            # 默认读 ~/Library/Rime，可加 --days 7
+chmod u-r ~/Library/Rime/typing_log.*.jsonl
 ```
 
 脚本靠"上屏 → 若干退格 → 再上屏"的序列还原纠错，按码的差异分类（左右手换位 / 同手换位 / 错一个键 …），
 列出出现最多的"打出→改成"，并统计 swap_fix 的命中和疑似误伤。也可以直接把日志文件交给 AI 去分析。
 
-注意：日志里有你上屏的全部中文内容，不要提交、不要上传；想清空直接删 `typing_log.*.jsonl`。
+注意：日志里有你上屏的全部中文内容，不要提交、不要上传；权限只是防误读（备份、同步、别的工具随手读到），不是真正的加密，同一用户能 chmod 回来；想清空直接删 `typing_log.*.jsonl`。
