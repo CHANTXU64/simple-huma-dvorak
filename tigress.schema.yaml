@@ -11,26 +11,30 @@ schema:
   schema_id: tigress
   version: 0.9
 
+patch:
+  punctuator:
+    import_preset: chinese_punct
+
 switches: # 0 默认关，1 默认开
-  # - name: ascii_mode
-  #   reset: 0
-  #   states: [ 中文, 西文 ]  #中英文状态
+  - name: ascii_mode
+    reset: 0
+    states: [ 中文, 西文 ]  #中英文状态
   - name: extended_char  #自定义字集
     reset: 1
     states: [ 全 , 常 ]
   - name: ascii_punct
     reset: 0
-    states: [ ，, ， ]
-  - name: full_shape
-    reset: 0
-    states: [ 半, 全 ]
+    states: [ '，。', ',.' ]
   - name: chaifen
     reset: 0 
     states: [ 隐, 显 ]
+  - name: punct_style
+    reset: 0
+    states: [ 'chinese', 'english' ]
 
 engine:
   processors:
-    # - ascii_composer
+    - ascii_composer
     - recognizer
     - key_binder
     - speller
@@ -39,7 +43,7 @@ engine:
     - navigator
     - express_editor #计算
   segmentors:  # 分段
-    # - ascii_segmentor
+    - ascii_segmentor
     - matcher
     - abc_segmentor
     - punct_segmentor
@@ -51,14 +55,16 @@ engine:
   filters:
     - lua_filter@core2022  #自定义字集过滤lua；放在最上面完美解决简繁滤镜出错的问题
     - simplifier@chaifen #拆分滤镜
+    - lua_filter@add_user_word #分段上屏后敲整词码，选中即自动加词（放在最后）
     - uniquifier #过滤重复
 
 speller:
   auto_clear: none # 3种选择， manual|auto|max_length 空码按下一键确认清屏|空码自动清|达到最长码时后码顶上清屏
-  # auto_select: true
-  max_code_length: 5
-  alphabet: ";,.'yxutrqponmlkjihgfedcba"
-  # auto_select_pattern: ^s?[',.pyfgcrlaoeuidhtn;qjkxbm]{4}$ #自动上屏规则
+  auto_select: true
+  max_code_length: 4
+  alphabet: ";,.'yxutrqponmlkjihgfedcbawv"
+  auto_select_pattern: ^[wv]$ #自动上屏规则
+  # auto_select_pattern: ^[',.pyfgcrlaoeuidhtn;qjkxbm]{4}$ #自动上屏规则
 
 translator:
   dictionary: tigress
@@ -68,7 +74,7 @@ translator:
   enable_encoder: false
   enable_sentence: false
   encode_commit_history: false
-  # max_phrase_length: 4
+  max_phrase_length: 4
   enable_user_dict: false
   enable_completion: true # 编码提示 true 开启  false 关闭
   comment_format: #提示码自定义
@@ -87,8 +93,11 @@ key_binder:
     - { when: has_menu, accept: "Control+n", send: Page_Down }
     - { when: has_menu, accept: "Control+p", send: Page_Up }
     - { when: composing, accept: "Control+h", send: BackSpace }
+    - { when: composing, accept: "BackSpace", send: BackSpace }
     - { when: composing, accept: "Control+comma", toggle: extended_char } # PC 自定字集开关
+    # - { when: always, accept: "Control+period" , toggle: punct_style } # 中英标点切换
     - { when: always, accept: "Control+period" , toggle: ascii_punct } # 中英标点切换
+    - { when: always, accept: "Control+Alt+space", toggle: ascii_mode } # 中/西文切换（Karabiner 把 Ctrl+Space 改成 Ctrl+Option+Space，Emacs 除外）
 
 recognizer:
   patterns:
@@ -114,43 +123,9 @@ chaifen:
   tips: char  #只给单字加滤镜，改为 char 。 词也显示，改为 all
 
 punctuator:
-  full_shape:
-    ' ' : { commit: '　' }
-    'w' : { commit: ， }
-    'v' : { commit: 。 }
-    '<' : [ 《, 〈, «, ‹ ]
-    '>' : [ 》, 〉, », › ]
-    '/' : [ ／, ÷ ]
-    '?' : { commit: ？ }
-    ';' : { commit: ； }
-    ':' : { commit: ： }
-    '''' : { pair: [ '‘', '’' ] }
-    '"' : { pair: [ '“', '”' ] }
-    '\' : [ 、, ＼ ]
-    '|' : [ ｜, ·, '§', '¦' ]
-    '`' : ｀
-    '~' : ～
-    '!' : { commit: ！ }
-    '@' : [ ＠, ☯ ]
-    '#' : [ ＃, ⌘ ]
-    '%' : [ ％, '°', '℃' ]
-    '$' : [ ￥, '$', '€', '£', '¥', '¢', '¤', ₩ ]
-    '^' : { commit: …… }
-    '&' : ＆
-    '*' : [ ＊, ·, ・, ×, ※, ❂ ]
-    '(' : （
-    ')' : ）
-    '-' : －
-    '_' : ——
-    '+' : ＋
-    '=' : [ ＝, 々, 〃 ]
-    '[' : [ 【, 〔, 「, ［ ]
-    ']' : [ 】, 〕, 」, ］]
-    '{' : [ "{", 〖, 『 , ｛ ]
-    '}' : [ "}", 〗, 』 , ｝ ]
   half_shape:
-    'w' : { commit: ， }
-    'v' : { commit: 。 }
+    'w' : { commit: ， } # [ '，', ',' ] # { commit: ， }
+    'v' : { commit: 。 } # [ '。', '.' ] # { commit: 。 }
     '<' : [ 《, 〈, «, ‹, ˂, ˱ ]
     '>' : [ 》, 〉, », ›, ˃, ˲ ]
     '/' : '/'
@@ -175,7 +150,7 @@ punctuator:
     '_' : ——
     '+' : '+'
     '=' : '='
-    '[' : 【
-    ']' : [ '】', '；' ]
+    '[' : [ '[', '【']
+    ']' : [ ']', '】', '；' ]
     '{' : [ "{", 〖, 『 , ｛ ]
     '}' : [ "}", 〗, 』 , ｝ ]

@@ -26,3 +26,7 @@ patch:
     # inline_asci 在输入法的临时西文编辑区內输入字母、数字、符号、空格等，回车上屏后自动复位到中文
     # commit_code 已输入的编码字符上屏并切换至西文输入模式
     # commit_text 候选框内的文字上屏并切换至西文输入模式
+  punctuator:
+    # 定义标点风格切换时的行为
+    'ascii_punct/0': chinese_punct  # 当选择"中文标点"时使用chinese_punct配置
+    'ascii_punct/1': english_punct  # 当选择"英文标点"时使用english_punct配置
