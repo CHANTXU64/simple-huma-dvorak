@@ -31,6 +31,9 @@ switches: # 0 默认关，1 默认开
   - name: punct_style
     reset: 0
     states: [ 'chinese', 'english' ]
+  - name: swap_fix  #左右手按快了颠倒相邻两键时，自动纠正（见 lua/swap_fix.lua）
+    reset: 1
+    states: [ 纠错关, 纠错开 ]
 
 engine:
   processors:
@@ -57,7 +60,15 @@ engine:
     - lua_filter@core2022  #自定义字集过滤lua；放在最上面完美解决简繁滤镜出错的问题
     - simplifier@chaifen #拆分滤镜
     - lua_filter@add_user_word #分段上屏后敲整词码，选中即自动加词（放在最后）
+    - lua_filter@swap_fix #左右手按快了颠倒相邻两键时，自动把对调后更常用的词放第一位（有开关 swap_fix）
     - uniquifier #过滤重复
+
+swap_fix: #左右手按快了颠倒相邻两键时的自动纠正，规则见 lua/swap_fix.lua（以下都是可选，值为缺省值）
+  max_typed_weight: 400 #被顶掉的词权重上限（词典原始权重）；比这个常用的词不会被顶掉
+  low_weight: 60 #权重不超过它的词算"凑数的词"
+  ratio_low: 3 #凑数的词：对调后的词常用几倍以上就纠正
+  ratio_high: 10 #权重到上限的词：要常用几倍以上才纠正
+  min_target_weight: 500 #对调后的词本身至少要有这么常用
 
 speller:
   auto_clear: none # 3种选择， manual|auto|max_length 空码按下一键确认清屏|空码自动清|达到最长码时后码顶上清屏
